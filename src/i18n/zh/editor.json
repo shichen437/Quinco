@@ -1,0 +1,23 @@
+{
+  "lockDoc": "锁定文档",
+  "unlockDoc": "解锁文档",
+  "restoreDoc": "恢复文档",
+  "deletePermanently": "彻底删除",
+  "moveToTrash": "移至回收站",
+  "moveToTrashTitle": "移动到回收站",
+  "moveToTrashDesc": "确定要将「{{title}}」移动到回收站吗？移动后可在回收站中恢复。",
+  "restoreDocTitle": "恢复文档",
+  "restoreDocDesc": "确定要恢复「{{title}}」吗？恢复后文档将重新显示在文档列表中。",
+  "deletePermanentlyTitle": "永久删除",
+  "deletePermanentlyDesc": "确定要永久删除「{{title}}」吗？此操作无法撤销。",
+  "modifyEmoji": "修改 emoji",
+  "addEmoji": "添加 emoji",
+  "deleteEmoji": "删除 emoji",
+  "info": "信息",
+  "noTags": "暂无标签",
+  "addTag": "添加标签",
+  "updatedAt": "更新时间: {{time}}",
+  "createdAt": "创建时间: {{time}}",
+  "backlinks": "反向链接 · {{count}}",
+  "noBacklinks": "暂无反向链接"
+}

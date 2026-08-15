@@ -1,0 +1,7 @@
+{
+  "loading": "Loading...",
+  "loadError": "Load failed: {{error}}",
+  "noData": "No documents found. Create a document and add references to see the graph.",
+  "nodes": "{{count}} nodes",
+  "links": "{{count}} links"
+}

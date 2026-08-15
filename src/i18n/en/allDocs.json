@@ -1,0 +1,9 @@
+{
+  "title": "All Documents",
+  "docs": "Documents",
+  "tags": "Tags",
+  "loading": "Loading...",
+  "empty": "No documents yet. Create one to get started.",
+  "emptyTag": "No documents under this tag",
+  "noTags": "No tags yet"
+}

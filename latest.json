@@ -1,0 +1,15 @@
+{
+  "notes": "项目初始化",
+  "platforms": {
+    "darwin-aarch64": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSY01WY3FKQ2dwc2xuSEhLcjNPRERLd3JaRDAyN1FnQ0RmeVF0L2R4T2JLSWhaM2VaNExoemozM0NHLzc3NkFVaEZSWU9aYTJXMEZhckM3NmtzUmNxS3RiRWczK1QySlFRPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg2NzgyOTQ3CWZpbGU6UXVpbmNvLmFwcC50YXIuZ3oKMmJndXAwZmVpZHc1R05wOU1OUEljempMV3lUN0tyK213SnhZelJ5ektOQXhDVjB4TjZKK2R1MGhtZThTckR5OW42UnhRTWp1dHIzYUJMa1d1bkZXQWc9PQo=",
+      "url": "https://github.com/shichen437/Quinco/releases/download/v0.0.1/Quinco.app.tar.gz"
+    },
+    "darwin-aarch64-app": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSY01WY3FKQ2dwc2xuSEhLcjNPRERLd3JaRDAyN1FnQ0RmeVF0L2R4T2JLSWhaM2VaNExoemozM0NHLzc3NkFVaEZSWU9aYTJXMEZhckM3NmtzUmNxS3RiRWczK1QySlFRPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg2NzgyOTQ3CWZpbGU6UXVpbmNvLmFwcC50YXIuZ3oKMmJndXAwZmVpZHc1R05wOU1OUEljempMV3lUN0tyK213SnhZelJ5ektOQXhDVjB4TjZKK2R1MGhtZThTckR5OW42UnhRTWp1dHIzYUJMa1d1bkZXQWc9PQo=",
+      "url": "https://github.com/shichen437/Quinco/releases/download/v0.0.1/Quinco.app.tar.gz"
+    }
+  },
+  "pub_date": "2026-08-15T08:39:21Z",
+  "version": "0.0.1"
+}

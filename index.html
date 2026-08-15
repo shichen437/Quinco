@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tauri + React + Typescript</title>
+    <style>
+      #app-loading {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: #ffffff;
+        z-index: 9999;
+        opacity: 1;
+        transition: opacity 0.4s ease-out;
+      }
+      #app-loading.fade-out {
+        opacity: 0;
+      }
+      #app-loading .bounce-text {
+        display: flex;
+        gap: 2px;
+        font-family: system-ui, sans-serif;
+        font-size: 28px;
+        font-weight: 600;
+        color: #404040;
+        letter-spacing: 0.04em;
+      }
+      #app-loading .bounce-text span {
+        display: inline-block;
+        animation: bounce 1.2s ease-in-out infinite;
+      }
+      #app-loading .bounce-text span:nth-child(1) {
+        animation-delay: 0s;
+      }
+      #app-loading .bounce-text span:nth-child(2) {
+        animation-delay: 0.1s;
+      }
+      #app-loading .bounce-text span:nth-child(3) {
+        animation-delay: 0.2s;
+      }
+      #app-loading .bounce-text span:nth-child(4) {
+        animation-delay: 0.3s;
+      }
+      #app-loading .bounce-text span:nth-child(5) {
+        animation-delay: 0.4s;
+      }
+      #app-loading .bounce-text span:nth-child(6) {
+        animation-delay: 0.5s;
+      }
+      @keyframes bounce {
+        0%,
+        60%,
+        100% {
+          transform: translateY(0);
+        }
+        30% {
+          transform: translateY(-12px);
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="app-loading">
+      <div class="bounce-text">
+        <span>Q</span><span>u</span><span>i</span><span>n</span><span>c</span><span>o</span>
+      </div>
+    </div>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

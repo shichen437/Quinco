@@ -1,0 +1,10 @@
+{
+  "workspace": "Workspace",
+  "noWorkspace": "No workspace",
+  "createWorkspace": "New Workspace",
+  "createTitle": "New Workspace",
+  "createDesc": "Enter a name for the new workspace",
+  "namePlaceholder": "Workspace name",
+  "loadError": "Failed to load workspaces",
+  "switchError": "Failed to switch workspace"
+}

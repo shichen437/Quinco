@@ -1,0 +1,41 @@
+{
+  "title": "设置",
+  "sections": {
+    "general": "基本设置",
+    "storage": "空间管理",
+    "data": "数据管理",
+    "ai": "AI",
+    "about": "关于"
+  },
+  "general": {
+    "language": "语言",
+    "theme": "主题",
+    "system": "跟随系统",
+    "light": "浅色模式",
+    "dark": "深色模式"
+  },
+  "storage": {
+    "dataDir": "工作区数据目录",
+    "usedSpace": "已用空间",
+    "workspaces": "工作区",
+    "current": "当前",
+    "deleteWorkspace": "删除工作区"
+  },
+  "data": {
+    "title": "数据管理"
+  },
+  "ai": {
+    "title": "AI"
+  },
+  "about": {
+    "title": "关于",
+    "currentVersion": "当前版本",
+    "latestVersion": "最新版本",
+    "sourceCode": "源码地址"
+  },
+  "workspaceDelete": {
+    "title": "删除工作区",
+    "description": "此操作将删除「{{name}}」下的所有数据，且无法恢复。请输入工作区名称以确认删除。",
+    "deleting": "删除中…"
+  }
+}

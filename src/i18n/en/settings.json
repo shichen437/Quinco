@@ -1,0 +1,41 @@
+{
+  "title": "Settings",
+  "sections": {
+    "general": "General",
+    "storage": "Storage",
+    "data": "Data",
+    "ai": "AI",
+    "about": "About"
+  },
+  "general": {
+    "language": "Language",
+    "theme": "Theme",
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "storage": {
+    "dataDir": "Directory",
+    "usedSpace": "Storage Used",
+    "workspaces": "Workspaces",
+    "current": "Current",
+    "deleteWorkspace": "Delete Workspace"
+  },
+  "data": {
+    "title": "Data Management"
+  },
+  "ai": {
+    "title": "AI"
+  },
+  "about": {
+    "title": "About",
+    "currentVersion": "Current Version",
+    "latestVersion": "Latest Version",
+    "sourceCode": "Source Code"
+  },
+  "workspaceDelete": {
+    "title": "Delete Workspace",
+    "description": "This will delete all data in \"{{name}}\" and cannot be undone. Please enter the workspace name to confirm.",
+    "deleting": "Deleting…"
+  }
+}

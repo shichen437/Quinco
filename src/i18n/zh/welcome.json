@@ -1,0 +1,9 @@
+{
+  "welcome": "欢迎使用 Quinco",
+  "hotkeys": {
+    "quickSearch": "快速搜索",
+    "createDoc": "创建文档",
+    "allDocs": "全部文档",
+    "graph": "关系图谱"
+  }
+}

@@ -1,0 +1,19 @@
+[tools]
+rust = "stable"
+node = "24"
+
+[tasks.build]
+run = ["npm run tauri build --"]
+
+[tasks.dev]
+description = "For development env"
+run = ["npm run tauri dev"]
+
+[tasks.fm]
+run = ["npm run format"]
+
+[tasks.icon]
+run = ["npm run tauri icon"]
+
+[tasks.json]
+run = ["tauri-latest-json"]

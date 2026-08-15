@@ -1,0 +1,23 @@
+{
+  "lockDoc": "Lock",
+  "unlockDoc": "Unlock",
+  "restoreDoc": "Restore",
+  "deletePermanently": "Delete",
+  "moveToTrash": "Move to Trash",
+  "moveToTrashTitle": "Move to Trash",
+  "moveToTrashDesc": "Are you sure you want to move \"{{title}}\" to trash? It can be restored from trash later.",
+  "restoreDocTitle": "Restore Document",
+  "restoreDocDesc": "Are you sure you want to restore \"{{title}}\"? It will reappear in the document list.",
+  "deletePermanentlyTitle": "Delete Permanently",
+  "deletePermanentlyDesc": "Are you sure you want to permanently delete \"{{title}}\"? This action cannot be undone.",
+  "modifyEmoji": "Change emoji",
+  "addEmoji": "Add emoji",
+  "deleteEmoji": "Remove emoji",
+  "info": "Info",
+  "noTags": "No tags",
+  "addTag": "Add tag",
+  "updatedAt": "Updated: {{time}}",
+  "createdAt": "Created: {{time}}",
+  "backlinks": "Backlinks · {{count}}",
+  "noBacklinks": "No backlinks yet"
+}

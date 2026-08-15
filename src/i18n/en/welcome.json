@@ -1,0 +1,9 @@
+{
+  "welcome": "Welcome to Quinco",
+  "hotkeys": {
+    "quickSearch": "Quick Search",
+    "createDoc": "New Document",
+    "allDocs": "All Documents",
+    "graph": "Graph View"
+  }
+}

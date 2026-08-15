@@ -1,0 +1,8 @@
+{
+  "title": "快速搜索",
+  "description": "搜索当前工作区的文档",
+  "placeholder": "搜索文档标题...",
+  "noMatch": "没有匹配的文档",
+  "searchResult": "搜索结果",
+  "recent": "最近使用"
+}

@@ -1,0 +1,7 @@
+{
+  "loading": "加载中...",
+  "loadError": "加载失败: {{error}}",
+  "noData": "暂无文档，创建文档并添加引用后可查看图谱。",
+  "nodes": "{{count}} 个节点",
+  "links": "{{count}} 条连线"
+}

@@ -1,0 +1,10 @@
+{
+  "workspace": "工作区",
+  "noWorkspace": "无工作区",
+  "createWorkspace": "新建工作区",
+  "createTitle": "新建工作区",
+  "createDesc": "输入新工作区的名称",
+  "namePlaceholder": "工作区名称",
+  "loadError": "加载工作区列表失败",
+  "switchError": "切换工作区失败"
+}

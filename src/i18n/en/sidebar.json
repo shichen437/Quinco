@@ -1,0 +1,13 @@
+{
+  "quickSearch": "Quick Search",
+  "createDoc": "New Document",
+  "allDocs": "All Documents",
+  "graph": "Graph View",
+  "favorites": "Favorites",
+  "noFavorites": "No favorites yet",
+  "tags": "Tags",
+  "noTags": "No tags yet",
+  "recent": "Recent",
+  "trash": "Trash",
+  "settings": "Settings"
+}

@@ -1,0 +1,8 @@
+{
+  "title": "Quick Search",
+  "description": "Search documents in current workspace",
+  "placeholder": "Search documents...",
+  "noMatch": "No matching documents",
+  "searchResult": "Search Results",
+  "recent": "Recent"
+}

@@ -1,0 +1,6 @@
+{
+  "title": "回收站",
+  "empty": "回收站为空",
+  "deletePermanently": "永久删除",
+  "deletePermanentlyDesc": "确定要永久删除「{{title}}」吗？此操作无法撤销。"
+}
