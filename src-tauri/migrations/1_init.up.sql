@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS sys_doc_version (
     doc_id      TEXT NOT NULL,
     content     TEXT,
     version     INTEGER DEFAULT 1,
-    created_at  DATETIME DEFAULT (datetime('now', 'localtime')),
+    created_at  DATETIME DEFAULT (datetime('now', 'localtime'))
 );
 
 CREATE UNIQUE INDEX idx_doc_version_doc_id ON sys_doc_version(doc_id, version);

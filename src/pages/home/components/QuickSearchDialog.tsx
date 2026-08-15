@@ -71,14 +71,16 @@ function QuickSearchDialog({
         <CommandInput placeholder={t("placeholder")} value={query} onValueChange={setQuery} />
         <CommandList>
           <CommandEmpty>{t("noMatch")}</CommandEmpty>
-          <CommandGroup heading={query.trim() ? t("searchResult") : t("recent")}>
-            {docs.map((doc) => (
-              <CommandItem key={doc.id} value={doc.id} onSelect={() => handleSelect(doc)}>
-                <DocIcon emoji={doc.emoji} />
-                <span>{doc.title || t("common:untitled")}</span>
-              </CommandItem>
-            ))}
-          </CommandGroup>
+          {docs.length > 0 && (
+            <CommandGroup heading={query.trim() ? t("searchResult") : t("recent")}>
+              {docs.map((doc) => (
+                <CommandItem key={doc.id} value={doc.id} onSelect={() => handleSelect(doc)}>
+                  <DocIcon emoji={doc.emoji} />
+                  <span>{doc.title || t("common:untitled")}</span>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          )}
         </CommandList>
       </Command>
     </CommandDialog>

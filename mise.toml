@@ -7,7 +7,7 @@ run = ["npm run tauri build --"]
 
 [tasks.dev]
 description = "For development env"
-run = ["npm run tauri dev"]
+run = ["npm run tauri dev -- -c src-tauri/tauri.dev.json"]
 
 [tasks.fm]
 run = ["npm run format"]
