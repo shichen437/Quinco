@@ -19,5 +19,12 @@
   "updatedAt": "Updated: {{time}}",
   "createdAt": "Created: {{time}}",
   "backlinks": "Backlinks · {{count}}",
-  "noBacklinks": "No backlinks yet"
+  "noBacklinks": "No backlinks yet",
+  "export": "Export",
+  "import": "Import",
+  "exportAsHTML": "HTML",
+  "exportAsMarkdown": "Markdown",
+  "importHTML": "HTML",
+  "importMarkdown": "Markdown",
+  "importFormatError": "Invalid file format, please select the corresponding file type"
 }

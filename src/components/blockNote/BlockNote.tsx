@@ -21,6 +21,7 @@ interface BlockNoteProps {
   onSave?: (blocks: PartialBlock[]) => void
   editable?: boolean
   docId?: string
+  onEditorReady?: (editor: any) => void
 }
 
 export default function BlockNote({
@@ -28,6 +29,7 @@ export default function BlockNote({
   onSave,
   editable = true,
   docId,
+  onEditorReady,
 }: BlockNoteProps) {
   const { audio: _audio, video: _video, file: _file, ...remainingBlockSpecs } = defaultBlockSpecs
   const schema = BlockNoteSchema.create({
@@ -58,6 +60,14 @@ export default function BlockNote({
   }, [])
 
   const prevContentRef = useRef<string>("")
+  const onEditorReadyRef = useRef(onEditorReady)
+  onEditorReadyRef.current = onEditorReady
+
+  useEffect(() => {
+    if (editor && onEditorReadyRef.current) {
+      onEditorReadyRef.current(editor)
+    }
+  }, [editor])
 
   useEffect(() => {
     if (!editor) return

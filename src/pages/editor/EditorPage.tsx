@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react"
+import { useCallback, useMemo, useState } from "react"
 
 import type { PartialBlock } from "@blocknote/core"
 import { useTranslation } from "react-i18next"
@@ -70,10 +70,11 @@ function EditorPage() {
 
   const handleToggleLock = useCallback(async () => {
     if (!docId) return
+    await flushSave()
     const newValue = isLock ? 0 : 1
     const doc = await setDocLock(docId, newValue)
     updateLock(doc.isLock === 1)
-  }, [docId, isLock, updateLock])
+  }, [docId, isLock, updateLock, flushSave])
 
   const handleTitleUpdate = useCallback(
     async (newTitle: string) => {
@@ -174,6 +175,11 @@ function EditorPage() {
     [saveContent]
   )
 
+  const [editor, setEditor] = useState<any>(null)
+  const handleEditorReady = useCallback((editorInstance: any) => {
+    setEditor(editorInstance)
+  }, [])
+
   return (
     <div className="flex h-full w-full flex-col">
       <EditorTitleBar
@@ -188,6 +194,7 @@ function EditorPage() {
         onRestore={handleRestore}
         onRestoreConfirmed={handleRestoreConfirmed}
         onDeletePermanently={handleDeletePermanently}
+        editor={editor}
       />
 
       <div className="flex-1 overflow-y-auto">
@@ -222,6 +229,7 @@ function EditorPage() {
               initialBlocks={initialBlocks}
               onSave={handleContentChange}
               editable={!isLock && !isDelete}
+              onEditorReady={handleEditorReady}
             />
           )}
         </div>
