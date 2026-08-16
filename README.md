@@ -22,7 +22,8 @@ Quinco 是一个基于 [Tauri2](https://tauri.app/) 和 [ReactJS](https://react.
 
 ## 📺 支持平台
 
-- darwin-aarch64
+- darwin-aarch64（Apple Silicon Macs）
+- darwin-x86_64（Intel Macs）
 
 > macOS 用户下载新版后如遇"无法验证开发者"提示，请前往 系统设置 → 隐私与安全性 点击仍要打开。
 

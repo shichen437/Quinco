@@ -4,6 +4,8 @@ import type { PartialBlock } from "@blocknote/core"
 
 import { getDocWithContent } from "@/api/doc"
 import { listDocTags, type TagItem } from "@/api/tag"
+import { toast } from "@/components/ui/toast"
+import i18n from "@/i18n"
 
 interface LoadState {
   title: string
@@ -83,6 +85,11 @@ export function useDocumentLoader(docId: string | undefined, waitForSave?: () =>
         })
       } catch (error) {
         console.error("加载文档失败", error)
+        toast.add({
+          title: i18n.t("common:operationFailed"),
+          description: i18n.t("common:loadDocFailed"),
+          type: "error",
+        })
         if (loadId === loadIdRef.current && isMountedRef.current) {
           setState((prev) => ({
             ...prev,

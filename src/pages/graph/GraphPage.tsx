@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 
 import { getGraphData, type GraphData } from "@/api/doc"
+import { toast } from "@/components/ui/toast"
 
 import GraphCanvas from "./components/GraphCanvas"
 
@@ -22,7 +23,14 @@ function GraphPage() {
         const result = await getGraphData()
         if (!cancelled) setData(result)
       } catch (err) {
-        if (!cancelled) setError(String(err))
+        if (!cancelled) {
+          setError(String(err))
+          toast.add({
+            title: t("common:operationFailed"),
+            description: t("common:loadFailed"),
+            type: "error",
+          })
+        }
       } finally {
         if (!cancelled) setLoading(false)
       }

@@ -7,6 +7,7 @@ import { getDataDir, getStorageUsed } from "@/api/system"
 import { listWorkspaces, type Workspace } from "@/api/workspace"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { toast } from "@/components/ui/toast"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { useFavoriteStore } from "@/store/favoriteStore"
 import { useTabStore } from "@/store/tabStore"
@@ -30,7 +31,11 @@ function StorageSection() {
     try {
       setWorkspaces(await listWorkspaces())
     } catch (err) {
-      console.error(t("workspace:loadError"), err)
+      toast.add({
+        title: t("common:operationFailed"),
+        description: t("common:loadFailed"),
+        type: "error",
+      })
     }
   }, [])
 
@@ -40,7 +45,11 @@ function StorageSection() {
       setDataDir(dir)
       setStorageUsed(used)
     } catch (err) {
-      console.error(t("workspace:loadError"), err)
+      toast.add({
+        title: t("common:operationFailed"),
+        description: t("common:loadFailed"),
+        type: "error",
+      })
     }
   }, [])
 

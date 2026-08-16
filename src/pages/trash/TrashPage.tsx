@@ -9,6 +9,7 @@ import {
   type TrashDocItem,
 } from "@/api/doc"
 import ConfirmDialog from "@/components/common/ConfirmDialog"
+import { toast } from "@/components/ui/toast"
 import { useFavoriteStore } from "@/store/favoriteStore"
 import { useTabStore } from "@/store/tabStore"
 
@@ -26,10 +27,16 @@ function TrashPage() {
     setLoading(true)
     try {
       setDocs(await listTrashDocs())
+    } catch (err) {
+      toast.add({
+        title: t("common:operationFailed"),
+        description: t("common:loadFailed"),
+        type: "error",
+      })
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [t])
 
   useEffect(() => {
     loadDocs()

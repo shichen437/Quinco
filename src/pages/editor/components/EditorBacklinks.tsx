@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next"
 
 import { listBidirectionalLinks, type DocLinkItem } from "@/api/doc"
 import DocIcon from "@/components/common/DocIcon"
+import { toast } from "@/components/ui/toast"
 import { cn } from "@/lib/utils"
 import { useTabStore } from "@/store/tabStore"
 
@@ -28,8 +29,12 @@ function EditorBacklinks({ docId }: EditorBacklinksProps) {
         if (cancelled) return
         setBacklinks(links.reverseLinks)
       })
-      .catch((err) => {
-        console.error("加载反向链接失败", err)
+      .catch(() => {
+        toast.add({
+          title: t("common:operationFailed"),
+          description: t("common:loadFailed"),
+          type: "error",
+        })
       })
 
     return () => {

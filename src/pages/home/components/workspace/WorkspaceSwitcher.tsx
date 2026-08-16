@@ -7,6 +7,7 @@ import { listWorkspaces, switchWorkspace, type Workspace } from "@/api/workspace
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Separator } from "@/components/ui/separator"
 import { SidebarMenuButton } from "@/components/ui/sidebar"
+import { toast } from "@/components/ui/toast"
 import { useFavoriteStore } from "@/store/favoriteStore"
 import { useTabStore } from "@/store/tabStore"
 import { useTagStore } from "@/store/tagStore"
@@ -29,7 +30,11 @@ function WorkspaceSwitcher() {
     try {
       setWorkspaces(await listWorkspaces())
     } catch (err) {
-      console.error(t("loadError"), err)
+      toast.add({
+        title: t("common:operationFailed"),
+        description: t("common:loadFailed"),
+        type: "error",
+      })
     }
   }, [])
 
@@ -53,7 +58,11 @@ function WorkspaceSwitcher() {
       setPopoverOpen(false)
       await loadWorkspaces()
     } catch (err) {
-      console.error(t("switchError"), err)
+      toast.add({
+        title: t("common:operationFailed"),
+        description: t("common:switchFailed"),
+        type: "error",
+      })
     } finally {
       setSwitching(false)
     }

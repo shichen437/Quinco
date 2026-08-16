@@ -23,6 +23,7 @@ Quinco is a bidirectional link editor built with [Tauri2](https://tauri.app/) an
 ## 📺 Supported Platforms
 
 - darwin-aarch64 (Apple Silicon Macs)
+- darwin-x86_64 (Intel Macs)
 
 > macOS users: If you see "cannot verify developer" after downloading a new release, go to System Settings → Privacy & Security click Open Anyway.
 

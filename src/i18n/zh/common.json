@@ -11,5 +11,10 @@
   "restore": "恢复",
   "processing": "处理中…",
   "clickToVisit": "点击访问",
-  "comingSoon": "{{feature}}功能即将上线"
+  "comingSoon": "{{feature}}功能即将上线",
+  "operationFailed": "操作失败",
+  "loadDocFailed": "加载文档失败",
+  "saveDocFailed": "保存失败",
+  "loadFailed": "加载失败",
+  "switchFailed": "切换失败"
 }

@@ -14,6 +14,7 @@ import {
 } from "@/api/doc"
 import { attachDocTag, detachDocTag, type TagItem } from "@/api/tag"
 import BlockNote from "@/components/blockNote/BlockNote"
+import { toast } from "@/components/ui/toast"
 import { useDocumentLoader } from "@/hooks/useDocumentLoader"
 import { useDocumentSave } from "@/hooks/useDocumentSave"
 import { useFavoriteStore } from "@/store/favoriteStore"
@@ -84,7 +85,11 @@ function EditorPage() {
           updateUpdatedAt(doc.updatedAt)
         }
       } catch (error) {
-        console.error("更新标题失败", error)
+        toast.add({
+          title: t("common:operationFailed"),
+          description: t("common:operationFailed"),
+          type: "error",
+        })
       }
     },
     [docId, updateTitle, updateUpdatedAt]
@@ -101,6 +106,11 @@ function EditorPage() {
         }
       } catch (error) {
         console.error("更新 emoji 失败", error)
+        toast.add({
+          title: t("common:operationFailed"),
+          description: t("common:operationFailed"),
+          type: "error",
+        })
       }
     },
     [docId, updateEmoji, updateUpdatedAt]

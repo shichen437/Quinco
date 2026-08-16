@@ -8,6 +8,7 @@ import {
   listDocsByTag,
   type DocListItem as DocListItemType,
 } from "@/api/doc"
+import { toast } from "@/components/ui/toast"
 import { useTabStore } from "@/store/tabStore"
 import { useTagStore } from "@/store/tagStore"
 
@@ -49,15 +50,24 @@ function AllDocsPage() {
 
   const selectedTag = tags.find((t) => t.id === selectedTagId) ?? null
 
-  const loadDocs = useCallback(async (tagId: number | null) => {
-    setLoading(true)
-    try {
-      const list = tagId != null ? await listDocsByTag(tagId) : await listCurrentWorkspaceDocs()
-      setDocs(list)
-    } finally {
-      setLoading(false)
-    }
-  }, [])
+  const loadDocs = useCallback(
+    async (tagId: number | null) => {
+      setLoading(true)
+      try {
+        const list = tagId != null ? await listDocsByTag(tagId) : await listCurrentWorkspaceDocs()
+        setDocs(list)
+      } catch (err) {
+        toast.add({
+          title: t("common:operationFailed"),
+          description: t("common:loadFailed"),
+          type: "error",
+        })
+      } finally {
+        setLoading(false)
+      }
+    },
+    [t]
+  )
 
   useEffect(() => {
     loadTags()

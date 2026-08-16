@@ -11,5 +11,10 @@
   "restore": "Restore",
   "processing": "Processing…",
   "clickToVisit": "Visit",
-  "comingSoon": "{{feature}} coming soon"
+  "comingSoon": "{{feature}} coming soon",
+  "operationFailed": "Operation failed",
+  "loadDocFailed": "Failed to load document",
+  "saveDocFailed": "Failed to save",
+  "loadFailed": "Failed to load",
+  "switchFailed": "Failed to switch"
 }

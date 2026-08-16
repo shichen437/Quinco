@@ -4,6 +4,8 @@ import type { PartialBlock } from "@blocknote/core"
 import { debounce } from "lodash"
 
 import { updateDocContent } from "@/api/doc"
+import { toast } from "@/components/ui/toast"
+import i18n from "@/i18n"
 
 interface SaveState {
   docId: string
@@ -30,6 +32,11 @@ export function useDocumentSave(docId: string | undefined) {
       lastSavedVersionRef.current = state.version
     } catch (error) {
       console.error("保存失败", error)
+      toast.add({
+        title: i18n.t("common:operationFailed"),
+        description: i18n.t("common:saveDocFailed"),
+        type: "error",
+      })
     } finally {
       isSavingRef.current = false
       if (pendingSaveRef.current && pendingSaveRef.current.version > lastSavedVersionRef.current) {
