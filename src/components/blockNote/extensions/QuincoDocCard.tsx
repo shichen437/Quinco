@@ -102,6 +102,7 @@ export const QuincoDocCard = createReactBlockSpec(
             >
               <DocRefPanel
                 mode="card"
+                disabled={!props.editor.editable}
                 onOpen={handleOpen}
                 onSwitchInline={handleSwitchToInline}
                 onSwitchCard={() => {}}

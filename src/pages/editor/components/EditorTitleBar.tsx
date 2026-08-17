@@ -142,7 +142,7 @@ function EditorTitleBar({
         {truncateAdvanced(title, { maxLength: 36, wordBoundary: true })}
       </h2>
       <div className="flex items-center gap-1">
-        <Button variant="ghost" size="icon-sm" onClick={onToggleFavorite}>
+        <Button variant="ghost" size="icon-sm" onClick={onToggleFavorite} disabled={isLock}>
           <Star className={cn("size-4", isFavorite && "fill-yellow-400 text-yellow-400")} />
         </Button>
         <DropdownMenu>
@@ -196,17 +196,25 @@ function EditorTitleBar({
             )}
             {isDelete ? (
               <>
-                <DropdownMenuItem onClick={() => setRestoreConfirmOpen(true)}>
+                <DropdownMenuItem onClick={() => setRestoreConfirmOpen(true)} disabled={isLock}>
                   <RotateCcw className="size-4" />
                   {t("restoreDoc")}
                 </DropdownMenuItem>
-                <DropdownMenuItem variant="destructive" onClick={() => setDeleteConfirmOpen(true)}>
+                <DropdownMenuItem
+                  variant="destructive"
+                  onClick={() => setDeleteConfirmOpen(true)}
+                  disabled={isLock}
+                >
                   <Trash2 className="size-4" />
                   {t("deletePermanently")}
                 </DropdownMenuItem>
               </>
             ) : (
-              <DropdownMenuItem variant="destructive" onClick={() => setTrashConfirmOpen(true)}>
+              <DropdownMenuItem
+                variant="destructive"
+                onClick={() => setTrashConfirmOpen(true)}
+                disabled={isLock}
+              >
                 <Trash2 className="size-4" />
                 {t("moveToTrash")}
               </DropdownMenuItem>
