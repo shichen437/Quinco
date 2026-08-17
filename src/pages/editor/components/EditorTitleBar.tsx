@@ -139,7 +139,7 @@ function EditorTitleBar({
   return (
     <div className="sticky top-0 z-10 flex h-12 shrink-0 items-center bg-background px-6">
       <h2 className="flex-1 truncate text-sm">
-        {truncateAdvanced(title, { maxLength: 36, wordBoundary: true })}
+        {truncateAdvanced(title, { maxLength: 12, wordBoundary: true })}
       </h2>
       <div className="flex items-center gap-1">
         <Button variant="ghost" size="icon-sm" onClick={onToggleFavorite} disabled={isLock}>

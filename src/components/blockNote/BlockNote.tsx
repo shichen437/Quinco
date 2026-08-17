@@ -3,18 +3,36 @@ import "@blocknote/core/fonts/inter.css"
 import type { PartialBlock } from "@blocknote/core"
 import {
   BlockNoteSchema,
+  combineByGroup,
   createHeadingBlockSpec,
   defaultBlockSpecs,
   defaultInlineContentSpecs,
 } from "@blocknote/core"
+import { filterSuggestionItems } from "@blocknote/core/extensions"
 import { en, zh } from "@blocknote/core/locales"
-import { SuggestionMenuController, useCreateBlockNote } from "@blocknote/react"
+import {
+  blockTypeSelectItems,
+  FormattingToolbar,
+  FormattingToolbarController,
+  getDefaultReactSlashMenuItems,
+  SuggestionMenuController,
+  useCreateBlockNote,
+} from "@blocknote/react"
 import { BlockNoteView } from "@blocknote/shadcn"
 import { autoPlacement, offset, shift, size } from "@floating-ui/react"
 
 import "@blocknote/shadcn/style.css"
 
 import { useEffect, useRef, useState } from "react"
+
+import { syntaxHighlighter } from "@blocknote/code-block"
+import {
+  createReactInlineMathSpec,
+  createReactMathBlockSpec,
+  getMathBlockTypeSelectItems,
+  getMathSlashMenuItems,
+  locales as mathLocales,
+} from "@blocknote/math-block"
 
 import { uploadFile } from "@/api/file"
 import { useSettingsStore } from "@/store/settingsStore"
@@ -46,10 +64,12 @@ export default function BlockNote({
         levels: [1, 2, 3],
       }),
       quincoDocCard: QuincoDocCard(),
+      mathBlock: createReactMathBlockSpec(),
     },
     inlineContentSpecs: {
       ...defaultInlineContentSpecs,
       quincoDoc: QuincoDoc,
+      math: createReactInlineMathSpec(),
     },
   })
 
@@ -59,9 +79,13 @@ export default function BlockNote({
 
   const editor = useCreateBlockNote({
     schema,
-    dictionary,
+    dictionary: {
+      ...dictionary,
+      math: mathLocales[lang],
+    },
     initialContent: initialBlocks && initialBlocks.length > 0 ? initialBlocks : undefined,
     uploadFile,
+    extensions: [syntaxHighlighter],
   })
 
   const [saveEnabled, setSaveEnabled] = useState(false)
@@ -91,7 +115,6 @@ export default function BlockNote({
 
       if (content !== prevContentRef.current) {
         prevContentRef.current = content
-        // 下游按 JSON 结构处理 blocks，此处放宽为默认 PartialBlock 类型
         onSave?.(blocks as unknown as PartialBlock[])
       }
     })
@@ -102,13 +125,53 @@ export default function BlockNote({
   }, [editor, onSave, saveEnabled])
 
   return (
-    <BlockNoteView editor={editor} shadCNComponents={{}} editable={editable} theme={resolvedTheme}>
+    <BlockNoteView
+      editor={editor}
+      shadCNComponents={{}}
+      editable={editable}
+      theme={resolvedTheme}
+      slashMenu={false}
+    >
+      <FormattingToolbarController
+        formattingToolbar={() => (
+          <FormattingToolbar
+            blockTypeSelectItems={[
+              ...blockTypeSelectItems(editor.dictionary),
+              ...getMathBlockTypeSelectItems(editor),
+            ]}
+          />
+        )}
+      />
+      <SuggestionMenuController
+        triggerCharacter={"/"}
+        getItems={async (query) => {
+          const items = combineByGroup(
+            getDefaultReactSlashMenuItems(editor),
+            getMathSlashMenuItems(editor)
+          )
+          return filterSuggestionItems(items, query)
+        }}
+        floatingUIOptions={{
+          useFloatingOptions: {
+            middleware: [
+              offset(4),
+              autoPlacement({ allowedPlacements: ["bottom-start", "top-start"], padding: 10 }),
+              shift(),
+              size({
+                apply({ elements, availableHeight }) {
+                  elements.floating.style.maxHeight = `${Math.max(0, availableHeight)}px`
+                },
+                padding: 10,
+              }),
+            ],
+          },
+        }}
+      />
       <SuggestionMenuController
         triggerCharacter="[["
         getItems={async (query) => getDocReferenceMenuItems(editor, query, docId)}
         suggestionMenuComponent={DocReferenceMenu}
         floatingUIOptions={{
-          // 默认 offset 为 10px，面板距光标过远，收紧到 4px
           useFloatingOptions: {
             middleware: [
               offset(4),

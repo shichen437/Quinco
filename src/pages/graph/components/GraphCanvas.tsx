@@ -6,6 +6,7 @@ import Sigma from "sigma"
 import type { Coordinates } from "sigma/types"
 
 import type { GraphData } from "@/api/doc"
+import { truncateAdvanced } from "@/lib/str"
 import { useTabStore } from "@/store/tabStore"
 
 interface GraphCanvasProps {
@@ -295,7 +296,10 @@ export default function GraphCanvas({ data }: GraphCanvasProps) {
         color: node.isDelete ? theme.deleted : theme.primary,
         docId: node.id,
         isDelete: node.isDelete,
-        label: node.title || t("common:untitled"),
+        label: truncateAdvanced(node.title || t("common:untitled"), {
+          maxLength: 8,
+          wordBoundary: true,
+        }),
         emoji: node.emoji,
         finalX: pos.x,
         finalY: pos.y,
@@ -423,7 +427,10 @@ export default function GraphCanvas({ data }: GraphCanvasProps) {
         z-index:3;
       `
       const emoji = node.emoji ? `${node.emoji} ` : ""
-      const title = node.title || t("common:untitled")
+      const title = truncateAdvanced(node.title || t("common:untitled"), {
+        maxLength: 8,
+        wordBoundary: true,
+      })
       label.textContent = `${emoji}${title}`
       if (node.isDelete) {
         label.style.textDecoration = "line-through"

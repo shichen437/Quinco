@@ -144,7 +144,7 @@ export const QuincoDoc = createReactInlineContentSpec(
             >
               <DocRefPanel
                 mode="inline"
-                disabled={!props.editor.editable}
+                disabled={!props.editor.isEditable}
                 onOpen={handleClick as unknown as (e: React.MouseEvent) => void}
                 onSwitchInline={() => {}}
                 onSwitchCard={handleSwitchToCard}
