@@ -111,7 +111,9 @@ fn walk_blocks(value: &Value, ids: &mut BTreeSet<String>) {
             }
         }
         Value::Object(map) => {
-            if map.get("type").and_then(Value::as_str) == Some("quincoDoc") {
+            let type_str = map.get("type").and_then(Value::as_str);
+
+            if matches!(type_str, Some("quincoDoc") | Some("quincoDocCard")) {
                 let doc_id = map
                     .get("props")
                     .and_then(|props| props.get("docId"))
@@ -121,6 +123,7 @@ fn walk_blocks(value: &Value, ids: &mut BTreeSet<String>) {
                     ids.insert(id);
                 }
             }
+
             for (_, child) in map {
                 walk_blocks(child, ids);
             }
