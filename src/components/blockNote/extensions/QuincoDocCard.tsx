@@ -4,6 +4,7 @@ import type { BlockNoteEditor } from "@blocknote/core"
 import { createReactBlockSpec } from "@blocknote/react"
 
 import DocIcon from "@/components/common/DocIcon"
+import { truncateAdvanced } from "@/lib/str"
 import { cn } from "@/lib/utils"
 import { useSettingsStore } from "@/store/settingsStore"
 import { useTabStore } from "@/store/tabStore"
@@ -96,7 +97,7 @@ export const QuincoDocCard = createReactBlockSpec(
           {showPanel && (
             <div
               ref={panelRef}
-              className="absolute -top-12 right-2 z-50"
+              className="absolute -top-12 left-20 z-50"
               onClick={(e) => e.stopPropagation()}
             >
               <DocRefPanel
@@ -117,7 +118,8 @@ export const QuincoDocCard = createReactBlockSpec(
                 notFound && "text-muted-foreground line-through"
               )}
             >
-              {title ?? (id ? "加载中…" : "无效引用")}
+              {truncateAdvanced(title ?? "", { maxLength: 36, wordBoundary: true }) ??
+                (id ? "加载中…" : "无效引用")}
             </span>
             {updatedAt && (
               <span className="ml-auto shrink-0 text-xs text-muted-foreground">

@@ -10,6 +10,7 @@ import { FilePlus2 } from "lucide-react"
 
 import { createDoc, getDoc, searchReferenceCandidates, updateDocTitle } from "@/api/doc"
 import DocIcon from "@/components/common/DocIcon"
+import { truncateAdvanced } from "@/lib/str"
 import { cn } from "@/lib/utils"
 import { useTabStore } from "@/store/tabStore"
 
@@ -40,7 +41,12 @@ interface DocTitleState {
 export function useDocTitle(id: string | null): DocTitleState {
   const [state, setState] = useState<DocTitleState>(() => {
     const cached = id ? docInfoCache.get(id) : undefined
-    return { title: cached?.title ?? null, emoji: cached?.emoji ?? "", updatedAt: cached?.updatedAt ?? null, notFound: false }
+    return {
+      title: cached?.title ?? null,
+      emoji: cached?.emoji ?? "",
+      updatedAt: cached?.updatedAt ?? null,
+      notFound: false,
+    }
   })
 
   useEffect(() => {
@@ -52,7 +58,8 @@ export function useDocTitle(id: string | null): DocTitleState {
         const docEmoji = doc.emoji || ""
         const docUpdatedAt = doc.updatedAt || ""
         docInfoCache.set(id, { title: docTitle, emoji: docEmoji, updatedAt: docUpdatedAt })
-        if (!cancelled) setState({ title: docTitle, emoji: docEmoji, updatedAt: docUpdatedAt, notFound: false })
+        if (!cancelled)
+          setState({ title: docTitle, emoji: docEmoji, updatedAt: docUpdatedAt, notFound: false })
       })
       .catch(() => {
         if (!cancelled) setState((prev) => ({ ...prev, title: "文档已删除", notFound: true }))
@@ -153,7 +160,8 @@ export const QuincoDoc = createReactInlineContentSpec(
             onClick={handleClick}
           >
             <DocIcon emoji={emoji} className="size-3.75 text-[15px]" />
-            {title ?? (id ? "加载中…" : "无效引用")}
+            {truncateAdvanced(title ?? "", { maxLength: 36, wordBoundary: true }) ??
+              (id ? "加载中…" : "无效引用")}
           </span>
         </span>
       )

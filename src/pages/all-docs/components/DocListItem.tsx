@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next"
 
 import DocIcon from "@/components/common/DocIcon"
+import { truncateAdvanced } from "@/lib/str"
 
 interface DocListItemProps {
   title: string
@@ -36,7 +37,12 @@ export default function DocListItem({ title, emoji, updatedAt, onClick }: DocLis
     >
       <div className="flex min-w-0 flex-1 items-center gap-2.5">
         <DocIcon emoji={emoji} className="text-muted-foreground" />
-        <span className="truncate text-sm">{title || t("common:untitled")}</span>
+        <span className="truncate text-sm">
+          {truncateAdvanced(title?.trim() || t("common:untitled"), {
+            maxLength: 36,
+            wordBoundary: true,
+          })}
+        </span>
       </div>
       <span className="shrink-0 text-xs text-muted-foreground">
         {formatTime(updatedAt, locale)}

@@ -30,6 +30,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { toast } from "@/components/ui/toast"
+import { truncateAdvanced } from "@/lib/str"
 import { cn } from "@/lib/utils"
 
 interface EditorTitleBarProps {
@@ -137,7 +138,9 @@ function EditorTitleBar({
 
   return (
     <div className="sticky top-0 z-10 flex h-12 shrink-0 items-center bg-background px-6">
-      <h2 className="flex-1 truncate text-sm">{title}</h2>
+      <h2 className="flex-1 truncate text-sm">
+        {truncateAdvanced(title, { maxLength: 36, wordBoundary: true })}
+      </h2>
       <div className="flex items-center gap-1">
         <Button variant="ghost" size="icon-sm" onClick={onToggleFavorite}>
           <Star className={cn("size-4", isFavorite && "fill-yellow-400 text-yellow-400")} />
