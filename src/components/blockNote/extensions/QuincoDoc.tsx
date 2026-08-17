@@ -13,31 +13,34 @@ import DocIcon from "@/components/common/DocIcon"
 import { cn } from "@/lib/utils"
 import { useTabStore } from "@/store/tabStore"
 
+import { DocRefPanel } from "./DocRefPanel"
+
 const DOC_PROTOCOL_PREFIX = "quinco://localhost/doc/"
 
-function buildDocUrl(id: string) {
+export function buildDocUrl(id: string) {
   return `${DOC_PROTOCOL_PREFIX}${id}`
 }
 
-function parseDocId(url: string) {
+export function parseDocId(url: string) {
   if (!url.startsWith(DOC_PROTOCOL_PREFIX)) return null
   const id = url.slice(DOC_PROTOCOL_PREFIX.length).split(/[/?#]/)[0]
   return id || null
 }
 
-// 文档标题缓存，多个引用指向同一文档时避免重复查询。
-const docInfoCache = new Map<string, { title: string; emoji: string }>()
+// 文档信息缓存，多个引用指向同一文档时避免重复查询。
+const docInfoCache = new Map<string, { title: string; emoji: string; updatedAt: string }>()
 
 interface DocTitleState {
   title: string | null
   emoji: string
+  updatedAt: string | null
   notFound: boolean
 }
 
-function useDocTitle(id: string | null): DocTitleState {
+export function useDocTitle(id: string | null): DocTitleState {
   const [state, setState] = useState<DocTitleState>(() => {
     const cached = id ? docInfoCache.get(id) : undefined
-    return { title: cached?.title ?? null, emoji: cached?.emoji ?? "", notFound: false }
+    return { title: cached?.title ?? null, emoji: cached?.emoji ?? "", updatedAt: cached?.updatedAt ?? null, notFound: false }
   })
 
   useEffect(() => {
@@ -47,8 +50,9 @@ function useDocTitle(id: string | null): DocTitleState {
       .then((doc) => {
         const docTitle = doc.title || "未命名"
         const docEmoji = doc.emoji || ""
-        docInfoCache.set(id, { title: docTitle, emoji: docEmoji })
-        if (!cancelled) setState({ title: docTitle, emoji: docEmoji, notFound: false })
+        const docUpdatedAt = doc.updatedAt || ""
+        docInfoCache.set(id, { title: docTitle, emoji: docEmoji, updatedAt: docUpdatedAt })
+        if (!cancelled) setState({ title: docTitle, emoji: docEmoji, updatedAt: docUpdatedAt, notFound: false })
       })
       .catch(() => {
         if (!cancelled) setState((prev) => ({ ...prev, title: "文档已删除", notFound: true }))
@@ -71,28 +75,86 @@ export const QuincoDoc = createReactInlineContentSpec(
   },
   {
     render: (props) => {
-      const id = parseDocId(props.inlineContent.props.docId)
+      const docUrl = props.inlineContent.props.docId
+      const id = parseDocId(docUrl)
       const { title, emoji, notFound } = useDocTitle(id)
       const openTab = useTabStore((s) => s.openTab)
+      const [hovered, setHovered] = useState(false)
+      const containerRef = useRef<HTMLSpanElement>(null)
+      const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+      const handleMouseEnter = () => {
+        if (hideTimer.current) {
+          clearTimeout(hideTimer.current)
+          hideTimer.current = null
+        }
+        setHovered(true)
+      }
+
+      const handleMouseLeave = () => {
+        hideTimer.current = setTimeout(() => {
+          setHovered(false)
+          hideTimer.current = null
+        }, 250)
+      }
 
       const handleClick = (event: MouseEvent<HTMLSpanElement>) => {
         if (!id || notFound) return
-        // 阻止事件冒泡到编辑器，避免触发光标定位/选中
         event.preventDefault()
         event.stopPropagation()
         openTab({ type: "editor", title: title || "未命名", docId: id })
       }
 
+      const handleSwitchToCard = (e: React.MouseEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
+        if (!docUrl) return
+        convertInlineToCard(props.editor, docUrl)
+        setHovered(false)
+      }
+
+      const handleDelete = (e: React.MouseEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
+        if (!docUrl) return
+        removeInlineDocRef(props.editor, docUrl)
+        setHovered(false)
+      }
+
       return (
         <span
-          className={cn(
-            "inline-flex items-center gap-0.5 align-baseline",
-            id && !notFound && "cursor-pointer hover:underline"
-          )}
-          onClick={handleClick}
+          ref={containerRef}
+          className="relative inline-block"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
         >
-          <DocIcon emoji={emoji} className="size-[15px] text-[15px]" />
-          {title ?? (id ? "加载中…" : "无效引用")}
+          {hovered && (
+            <span
+              className="absolute bottom-full left-0 z-50 mb-1 whitespace-nowrap"
+              onMouseDown={(e) => e.preventDefault()}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+            >
+              <DocRefPanel
+                mode="inline"
+                onOpen={handleClick as unknown as (e: React.MouseEvent) => void}
+                onSwitchInline={() => {}}
+                onSwitchCard={handleSwitchToCard}
+                onDelete={handleDelete}
+              />
+            </span>
+          )}
+
+          <span
+            className={cn(
+              "inline-flex items-center gap-0.5 align-baseline",
+              id && !notFound && "cursor-pointer hover:underline"
+            )}
+            onClick={handleClick}
+          >
+            <DocIcon emoji={emoji} className="size-3.75 text-[15px]" />
+            {title ?? (id ? "加载中…" : "无效引用")}
+          </span>
         </span>
       )
     },
@@ -101,6 +163,73 @@ export const QuincoDoc = createReactInlineContentSpec(
 
 function insertDocReference(editor: BlockNoteEditor<any, any, any>, docId: string) {
   editor.insertInlineContent([{ type: "quincoDoc", props: { docId: buildDocUrl(docId) } }, " "])
+}
+
+/** 从所在块中移除内联 quincoDoc 引用。 */
+function removeInlineDocRef(editor: BlockNoteEditor<any, any, any>, docUrl: string) {
+  const blocks = editor.document
+  for (const block of blocks) {
+    const content = (block as any).content
+    if (!content || typeof content === "string" || !Array.isArray(content)) continue
+
+    const hasQuincoDoc = content.some(
+      (c: any) => c.type === "quincoDoc" && c.props?.docId === docUrl
+    )
+    if (!hasQuincoDoc) continue
+
+    const filteredContent = content.filter(
+      (c: any) => c.type !== "quincoDoc" || c.props?.docId !== docUrl
+    )
+
+    const hasMeaningfulContent = filteredContent.some((c: any) => {
+      if (c.type === "text" && c.text && c.text.trim().length > 0) return true
+      if (c.type !== "text") return true
+      return false
+    })
+
+    if (hasMeaningfulContent) {
+      editor.updateBlock((block as any).id, { content: filteredContent } as any)
+    } else {
+      editor.removeBlocks([(block as any).id])
+    }
+    break
+  }
+}
+
+function convertInlineToCard(editor: BlockNoteEditor<any, any, any>, docUrl: string) {
+  const blocks = editor.document
+  for (const block of blocks) {
+    const content = (block as any).content
+    if (!content || typeof content === "string" || !Array.isArray(content)) continue
+
+    const hasQuincoDoc = content.some(
+      (c: any) => c.type === "quincoDoc" && c.props?.docId === docUrl
+    )
+    if (!hasQuincoDoc) continue
+
+    const meaningfulItems = content.filter((c: any) => {
+      if (c.type === "quincoDoc") return true
+      if (c.type === "text" && c.text && c.text.trim().length > 0) return true
+      if (c.type !== "text") return true
+      return false
+    })
+
+    const cardBlock = {
+      type: "quincoDocCard",
+      props: { docId: docUrl },
+    } as any
+
+    if (meaningfulItems.length === 1 && meaningfulItems[0].type === "quincoDoc") {
+      editor.replaceBlocks([(block as any).id], [cardBlock])
+    } else {
+      const filteredContent = content.filter(
+        (c: any) => c.type !== "quincoDoc" || c.props?.docId !== docUrl
+      )
+      editor.insertBlocks([cardBlock], (block as any).id, "after")
+      editor.updateBlock((block as any).id, { content: filteredContent } as any)
+    }
+    break
+  }
 }
 
 export async function getDocReferenceMenuItems(

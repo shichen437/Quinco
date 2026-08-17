@@ -1,7 +1,12 @@
 import "@blocknote/core/fonts/inter.css"
 
 import type { PartialBlock } from "@blocknote/core"
-import { BlockNoteSchema, defaultBlockSpecs, defaultInlineContentSpecs } from "@blocknote/core"
+import {
+  BlockNoteSchema,
+  createHeadingBlockSpec,
+  defaultBlockSpecs,
+  defaultInlineContentSpecs,
+} from "@blocknote/core"
 import { en, zh } from "@blocknote/core/locales"
 import { SuggestionMenuController, useCreateBlockNote } from "@blocknote/react"
 import { BlockNoteView } from "@blocknote/shadcn"
@@ -15,6 +20,7 @@ import { uploadFile } from "@/api/file"
 import { useSettingsStore } from "@/store/settingsStore"
 
 import { DocReferenceMenu, getDocReferenceMenuItems, QuincoDoc } from "./extensions/QuincoDoc"
+import { QuincoDocCard } from "./extensions/QuincoDocCard"
 
 interface BlockNoteProps {
   initialBlocks?: PartialBlock[]
@@ -35,6 +41,11 @@ export default function BlockNote({
   const schema = BlockNoteSchema.create({
     blockSpecs: {
       ...remainingBlockSpecs,
+      heading: createHeadingBlockSpec({
+        allowToggleHeadings: false,
+        levels: [1, 2, 3],
+      }),
+      quincoDocCard: QuincoDocCard(),
     },
     inlineContentSpecs: {
       ...defaultInlineContentSpecs,
