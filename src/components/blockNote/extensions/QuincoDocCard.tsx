@@ -57,14 +57,21 @@ export const QuincoDocCard = createReactBlockSpec(
             !cardRef.current.contains(e.target as Node)
           ) {
             setShowPanel(false)
+            props.editor.focus()
           }
         }
         document.addEventListener("mousedown", handler)
         return () => document.removeEventListener("mousedown", handler)
-      }, [showPanel])
+      }, [showPanel, props.editor])
 
       const handleCardClick = () => {
         setShowPanel((prev) => !prev)
+      }
+
+      const handleCardDoubleClick = () => {
+        if (!id || notFound) return
+        setShowPanel(false)
+        openTab({ type: "editor", title: title || "未命名", docId: id })
       }
 
       const handleOpen = (e: React.MouseEvent) => {
@@ -93,11 +100,12 @@ export const QuincoDocCard = createReactBlockSpec(
           className="group w-full relative my-2 cursor-pointer select-none rounded-lg border bg-card p-2.5 shadow-sm transition-shadow hover:shadow-md"
           contentEditable={false}
           onClick={handleCardClick}
+          onDoubleClick={handleCardDoubleClick}
         >
           {showPanel && (
             <div
               ref={panelRef}
-              className="absolute -top-12 left-20 z-50"
+              className="absolute -top-14 left-0 z-50"
               onClick={(e) => e.stopPropagation()}
             >
               <DocRefPanel

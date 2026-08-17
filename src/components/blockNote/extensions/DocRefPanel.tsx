@@ -24,18 +24,18 @@ export function DocRefPanel({
   onDelete,
 }: DocRefPanelProps) {
   return (
-    <div className="flex items-center gap-1 rounded-lg border bg-popover p-2 text-popover-foreground shadow-md">
+    <div className="flex items-center gap-1 rounded-lg border bg-popover p-1 text-popover-foreground shadow-md">
       <button
-        className="rounded-md p-1.5 transition-colors hover:bg-accent hover:text-accent-foreground"
+        className="rounded-md p-3 transition-colors hover:bg-accent hover:text-accent-foreground"
         title="打开文档"
         onClick={onOpen}
       >
-        <ExternalLink size={16} />
+        <ExternalLink size={14} />
       </button>
 
       <button
         className={cn(
-          "rounded-md p-1.5 transition-colors",
+          "rounded-md p-3 transition-colors",
           disabled
             ? "pointer-events-none opacity-40"
             : "hover:bg-accent hover:text-accent-foreground",
@@ -45,11 +45,11 @@ export function DocRefPanel({
         onClick={onSwitchInline}
         disabled={disabled}
       >
-        <AlignLeft size={16} />
+        <AlignLeft size={14} />
       </button>
       <button
         className={cn(
-          "rounded-md p-1.5 transition-colors",
+          "rounded-md p-3 transition-colors",
           disabled
             ? "pointer-events-none opacity-40"
             : "hover:bg-accent hover:text-accent-foreground",
@@ -59,12 +59,12 @@ export function DocRefPanel({
         onClick={onSwitchCard}
         disabled={disabled}
       >
-        <Layout size={16} />
+        <Layout size={14} />
       </button>
 
       <button
         className={cn(
-          "rounded-md p-1.5 transition-colors text-muted-foreground",
+          "rounded-md p-3 transition-colors text-muted-foreground",
           disabled
             ? "pointer-events-none opacity-40"
             : "hover:bg-destructive/10 hover:text-destructive"
@@ -73,7 +73,7 @@ export function DocRefPanel({
         onClick={onDelete}
         disabled={disabled}
       >
-        <Trash2 size={16} />
+        <Trash2 size={14} />
       </button>
     </div>
   )
