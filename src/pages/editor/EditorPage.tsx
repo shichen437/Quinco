@@ -233,9 +233,7 @@ function EditorPage() {
             />
           )}
         </div>
-      </div>
 
-      <div>
         <div className="mx-auto max-w-3xl px-8">{docId && <EditorBacklinks docId={docId} />}</div>
       </div>
     </div>
