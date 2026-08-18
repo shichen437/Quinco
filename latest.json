@@ -1,15 +1,15 @@
 {
-  "notes": "项目初始化",
+  "notes": "新增功能",
   "platforms": {
     "darwin-x86_64": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSY01WY3FKQ2dwc2liT2U5MkRzcXZ2TkdWU3Mrb3N2cnpWaTIrOXVDV1daaU0zUkVqMWFKNjkxNUNnbDUwbHV1RnZOZ1A0OVhhejZnRW0vTWsxK3J1cFgxRmlNUC9zTHc0PQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg2NzkzOTA3CWZpbGU6UXVpbmNvLmFwcC50YXIuZ3oKMmNlUi9vNGFHQXlydHNjNUtUdm9icHRoL29NZklMUE9kc3dNcHlwbzM5eEVTUTh4V29id1pkR2tqYTZBNkl2TUVuUGpJendTWDF4R0RQaXFjMmRWQVE9PQo=",
-      "url": "https://github.com/shichen437/Quinco/releases/download/v0.0.1/Quinco_x64.app.tar.gz"
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSY01WY3FKQ2dwc2dHYlFXelNBZUNKVzN5S29lMlVOeFRNSjM0bkFRYTFNQ2hDOUYyRENaNS9yK0J3TGhSODhubFVsMXhmYTZIc0JPNUkya3RJbWxPZDZOYlVNZ3pmbFFRPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg3MDI2NzIxCWZpbGU6UXVpbmNvLmFwcC50YXIuZ3oKd1pRNE9hQXJhK3I2KzUrR0NIbllaSnY5amtrR1lzM1puRHBhZ3ZlV2YzQkZLNS9hNFg1M3hjR3d4VTZ2TTlVaXJWTWs2c2MwdHlwMjNyUnlMbDhEQnc9PQo=",
+      "url": "https://github.com/shichen437/Quinco/releases/download/v0.0.2/Quinco_x64.app.tar.gz"
     },
     "darwin-aarch64": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSY01WY3FKQ2dwc3ZlSXc0ZStveVFMVUp6MVlBTkZra3BMK3A1NG1jNFhkNm56RzlQMlJuY0NsZVNBa0kwUXcyQzF4UGhXQ2VNY0lNN0ZIN3BMMk1neHd4aXc1RWQraUF3PQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg2NzkzOTk3CWZpbGU6UXVpbmNvLmFwcC50YXIuZ3oKZmlSdnRCNmVpVTdTQ3RYaXJrZTRMejdoNzBIa214bVpVaDJCR0gyMXlLbGJTeVl4cTR5SEw5amp0cjhPWWJNWkNrYk5jTEI4QmxjQzZLWWFuRkFpQUE9PQo=",
-      "url": "https://github.com/shichen437/Quinco/releases/download/v0.0.1/Quinco_aarch64.app.tar.gz"
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVSY01WY3FKQ2dwc2xzWmFobURPR3hxQWFXcVVPTGFiTXJuWVpJWmtRUUNEQlZTYi8wNHZ2QzBOVE9RU0oyclZmNC9SY2JiSEJWNTNHR3AyZXFkNGxCWVdQT1NPR0ozVmdNPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg3MDI2ODIzCWZpbGU6UXVpbmNvLmFwcC50YXIuZ3oKZUVScERPWjhGaC94OTBJVjdBZ2l6WHZtbHJtd3hkZjltc08xR2xUemlmWVQvbTVLWDB3Rk5oQ053UEEzTlNBMWpXZUlqNTNrK015WXNrOCszcHd0QkE9PQo=",
+      "url": "https://github.com/shichen437/Quinco/releases/download/v0.0.2/Quinco_aarch64.app.tar.gz"
     }
   },
-  "pub_date": "2026-08-15T11:28:36Z",
-  "version": "0.0.1"
+  "pub_date": "2026-08-18T12:12:36Z",
+  "version": "0.0.2"
 }
