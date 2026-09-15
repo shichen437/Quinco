@@ -47,7 +47,7 @@ function AiSection() {
           className="inline-flex items-center gap-1 rounded-md border px-2 py-1 text-sm cursor-pointer transition-colors hover:bg-muted/80 hover:text-foreground"
           onClick={() => setSubpage("providers")}
         >
-          {t("config")} <ChevronRight className="size-4" />
+          {t("configure")} <ChevronRight className="size-4" />
         </button>
       </SettingRow>
     </div>

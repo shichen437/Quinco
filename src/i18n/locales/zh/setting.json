@@ -66,6 +66,7 @@
   "restartLater": "稍后重启",
   "updateFailed": "更新失败",
   "releaseNotes": "更新说明",
+  "configure": "配置",
   "configured": "已配置",
   "resetApiKey": "重置 API Key",
   "reset": "重置",
