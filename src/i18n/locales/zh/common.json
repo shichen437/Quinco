@@ -1,0 +1,20 @@
+{
+  "confirm": "确定",
+  "cancel": "取消",
+  "loading": "加载中...",
+  "save": "保存",
+  "delete": "删除",
+  "create": "创建",
+  "creating": "创建中...",
+  "add": "添加",
+  "back": "返回",
+  "config": "配置",
+  "noContent": "暂无内容",
+  "unnamed": "未命名",
+  "confirmInputPlaceholder": "请输入「{{value}}」",
+  "closeTab": "关闭标签页",
+  "newTab": "新建标签页",
+  "goBack": "后退",
+  "goForward": "前进",
+  "aiAssistant": "AI 助手"
+}

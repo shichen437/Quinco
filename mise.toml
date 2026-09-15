@@ -1,0 +1,22 @@
+[tools]
+rust = "stable"
+node = "24"
+
+[tasks.build]
+run = ["npm run tauri build -- --target x86_64-apple-darwin", "npm run tauri build -- --target aarch64-apple-darwin"]
+
+[tasks.dev]
+description = "For development env"
+run = ["npm run tauri dev -- -c src-tauri/tauri.dev.json"]
+
+[tasks.fm]
+run = [
+    "npm run format",
+    "cd src-tauri && cargo fmt"
+]
+
+[tasks.icon]
+run = ["npm run tauri icon"]
+
+[tasks.release]
+run = ["./build-latest.sh"]

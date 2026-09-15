@@ -1,0 +1,20 @@
+{
+  "confirm": "Confirm",
+  "cancel": "Cancel",
+  "loading": "Loading...",
+  "save": "Save",
+  "delete": "Delete",
+  "create": "Create",
+  "creating": "Creating...",
+  "add": "Add",
+  "back": "Back",
+  "config": "Configure",
+  "noContent": "No content",
+  "unnamed": "Untitled",
+  "confirmInputPlaceholder": "Type \"{{value}}\" to confirm",
+  "closeTab": "Close Tab",
+  "newTab": "New Tab",
+  "goBack": "Back",
+  "goForward": "Forward",
+  "aiAssistant": "AI Assistant"
+}

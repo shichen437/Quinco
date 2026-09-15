@@ -1,0 +1,19 @@
+{
+  "productName": "Quinco Dev",
+  "identifier": "com.quinco.app.dev",
+  "app": {
+    "windows": [
+      {
+        "title": "Quinco Dev",
+        "width": 1200,
+        "height": 900,
+        "minWidth": 800,
+        "minHeight": 600,
+        "dragDropEnabled": false
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  }
+}
