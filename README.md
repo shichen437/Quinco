@@ -36,3 +36,4 @@ Quinco 是一个基于 [Tauri2](https://tauri.app/) 和 [ReactJS](https://react.
 - [BlockNote](https://github.com/TypeCellOS/BlockNote)
 - [Magic UI](https://github.com/magicuidesign/magicui)
 - [Shadcn UI](https://github.com/shadcn-ui/ui)
+- [Rust-genai](https://github.com/jeremychone/rust-genai)

@@ -36,3 +36,4 @@ Issues and pull requests are welcome! Join us in building this project together.
 - [BlockNote](https://github.com/TypeCellOS/BlockNote)
 - [Magic UI](https://github.com/magicuidesign/magicui)
 - [Shadcn UI](https://github.com/shadcn-ui/ui)
+- [Rust-genai](https://github.com/jeremychone/rust-genai)
