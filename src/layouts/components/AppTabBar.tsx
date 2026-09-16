@@ -1,3 +1,5 @@
+import { useEffect } from "react"
+
 import { Files, FileText, NetworkIcon, PlusIcon, TrashIcon, XIcon } from "lucide-react"
 import { useTranslation } from "react-i18next"
 
@@ -18,6 +20,26 @@ function AppTabBar() {
   const addTab = useTabStore((s) => s.addTab)
   const closeTab = useTabStore((s) => s.closeTab)
   const setActiveTab = useTabStore((s) => s.setActiveTab)
+  const goBack = useTabStore((s) => s.goBack)
+  const goForward = useTabStore((s) => s.goForward)
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!event.metaKey) return
+      switch (event.key) {
+        case "[":
+          event.preventDefault()
+          goBack()
+          break
+        case "]":
+          event.preventDefault()
+          goForward()
+          break
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [goBack, goForward])
 
   const handleNewTab = () => {
     addTab("all-docs", getPageTitle("all-docs"))

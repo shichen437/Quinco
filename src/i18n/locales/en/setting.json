@@ -47,6 +47,8 @@
   "allDocs": "All Documents",
   "newDoc": "New Document",
   "graph": "Graph",
+  "goBack": "Back",
+  "goForward": "Forward",
   "currentVersion": "Current Version",
   "latestVersion": "Latest Version",
   "sourceCode": "Source Code",

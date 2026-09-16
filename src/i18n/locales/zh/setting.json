@@ -47,6 +47,8 @@
   "allDocs": "全部文档",
   "newDoc": "新建文档",
   "graph": "关系图谱",
+  "goBack": "后退",
+  "goForward": "前进",
   "currentVersion": "当前版本",
   "latestVersion": "最新版本",
   "sourceCode": "源码地址",

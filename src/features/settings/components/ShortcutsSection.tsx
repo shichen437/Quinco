@@ -23,6 +23,8 @@ function ShortcutsSection() {
         { label: t("allDocs"), keys: [["⌘", "⌥", "A"]] },
         { label: t("newDoc"), keys: [["⌘", "⌥", "N"]] },
         { label: t("graph"), keys: [["⌘", "⌥", "G"]] },
+        { label: t("goBack"), keys: [["⌘", "["]] },
+        { label: t("goForward"), keys: [["⌘", "]"]] },
       ],
     },
     {
