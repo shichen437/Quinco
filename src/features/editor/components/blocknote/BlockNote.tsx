@@ -59,13 +59,31 @@ export default function BlockNote({
   // ensuring BlockNote picks up the new dictionary.
   const editorKey = lang
 
+  // Track the latest editor content so it survives language-switch editor
+  // recreation (useCreateBlockNote rebuilds on editorKey change).
+  const latestBlocksRef = useRef<PartialBlock[] | undefined>(initialBlocks)
+  const prevInitialBlocksRef = useRef(initialBlocks)
+
+  // When the initialBlocks prop changes (new document loaded), sync the ref
+  // DURING render so useMemo picks up the correct value.
+  if (initialBlocks !== prevInitialBlocksRef.current) {
+    prevInitialBlocksRef.current = initialBlocks
+    latestBlocksRef.current = initialBlocks
+  }
+
+  // Use latestBlocksRef so that when the editor is recreated after a
+  // language switch, it is seeded with the most recent editor content
+  // rather than the stale initialBlocks passed from the parent.
   const editor = useCreateBlockNote(
     {
       schema,
       dictionary: {
         ...dictionary,
       },
-      initialContent: initialBlocks && initialBlocks.length > 0 ? initialBlocks : undefined,
+      initialContent:
+        latestBlocksRef.current && latestBlocksRef.current.length > 0
+          ? latestBlocksRef.current
+          : undefined,
       extensions: [syntaxHighlighter],
     },
     [editorKey, initialBlocks]
@@ -98,6 +116,10 @@ export default function BlockNote({
 
       if (content !== prevContentRef.current) {
         prevContentRef.current = content
+        // Keep the ref in sync with the latest editor content so a
+        // pending language switch (which recreates the editor) preserves
+        // un-saved edits.
+        latestBlocksRef.current = blocks as unknown as PartialBlock[]
         onSave?.(blocks as unknown as PartialBlock[])
       }
     })
