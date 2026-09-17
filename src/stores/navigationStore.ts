@@ -11,12 +11,15 @@ export interface Tab {
   title: string
   docId?: string
   emoji?: string
+  /** 全部文档页-标签视图下当前打开的标签 id */
+  tagId?: number
 }
 
 export interface HistoryEntry {
   type: PageType
   title: string
   docId?: string
+  tagId?: number
 }
 
 interface TabHistory {
@@ -39,6 +42,10 @@ interface NavigationState {
   updateTabTitle: (id: string, title: string) => void
   updateTabDocId: (id: string, docId: string) => void
   openDocInActiveTab: (docId: string, title: string) => void
+  /** 在当前激活标签页内打开“全部文档-标签视图-指定标签” */
+  openTagInActiveTab: (tagId: number) => void
+  /** 清除当前激活标签页的标签视图状态（返回全部标签列表） */
+  clearActiveTabTag: () => void
 
   goBack: () => void
   goForward: () => void
@@ -175,7 +182,9 @@ export const useNavigationStore = create<NavigationState>((set, get) => ({
     const entry: HistoryEntry = { type, title: getPageTitle(type) }
     set((s) => ({
       tabs: s.tabs.map((t) =>
-        t.id === s.activeTabId ? { ...t, type, title: getPageTitle(type) } : t
+        t.id === s.activeTabId
+          ? { ...t, type, title: getPageTitle(type), docId: undefined, tagId: undefined }
+          : t
       ),
       tabHistories: recordNavigation(s, s.activeTabId!, entry),
     }))
@@ -201,7 +210,13 @@ export const useNavigationStore = create<NavigationState>((set, get) => ({
       set((s) => ({
         tabs: s.tabs.map((t) =>
           t.id === s.activeTabId
-            ? { ...t, type: "editor" as PageType, docId, title: title || "未命名" }
+            ? {
+                ...t,
+                type: "editor" as PageType,
+                docId,
+                title: title || "未命名",
+                tagId: undefined,
+              }
             : t
         ),
         tabHistories: recordNavigation(s, s.activeTabId!, entry),
@@ -218,6 +233,65 @@ export const useNavigationStore = create<NavigationState>((set, get) => ({
     }))
   },
 
+  openTagInActiveTab: (tagId) => {
+    const state = get()
+
+    // 已停留在“全部文档-标签视图-该标签”时视为无操作，不再重复记录历史
+    const activeTab = state.activeTabId
+      ? state.tabs.find((t) => t.id === state.activeTabId)
+      : undefined
+    if (activeTab?.type === "all-docs" && activeTab.tagId === tagId) return
+
+    const entry: HistoryEntry = {
+      type: "all-docs",
+      title: getPageTitle("all-docs"),
+      tagId,
+    }
+
+    if (state.activeTabId) {
+      set((s) => ({
+        tabs: s.tabs.map((t) =>
+          t.id === s.activeTabId
+            ? {
+                ...t,
+                type: "all-docs" as PageType,
+                title: getPageTitle("all-docs"),
+                docId: undefined,
+                tagId,
+              }
+            : t
+        ),
+        tabHistories: recordNavigation(s, s.activeTabId!, entry),
+      }))
+      return
+    }
+
+    const id = `all-docs-${Date.now()}`
+    const newTab: Tab = {
+      id,
+      type: "all-docs",
+      title: getPageTitle("all-docs"),
+      tagId,
+    }
+    set((s) => ({
+      tabs: [...s.tabs, newTab],
+      activeTabId: id,
+      tabHistories: recordNavigation(s, id, entry),
+    }))
+  },
+
+  clearActiveTabTag: () => {
+    const state = get()
+    if (!state.activeTabId) return
+    const activeTab = state.tabs.find((t) => t.id === state.activeTabId)
+    if (!activeTab?.tagId) return
+
+    // 仅退出标签详情状态，属于页内局部视图切换，不写历史
+    set((s) => ({
+      tabs: s.tabs.map((t) => (t.id === s.activeTabId ? { ...t, tagId: undefined } : t)),
+    }))
+  },
+
   goBack: () => {
     const state = get()
     if (!state.activeTabId) return
@@ -231,7 +305,13 @@ export const useNavigationStore = create<NavigationState>((set, get) => ({
     set((s) => ({
       tabs: s.tabs.map((t) =>
         t.id === s.activeTabId
-          ? { ...t, type: targetEntry.type, title: targetEntry.title, docId: targetEntry.docId }
+          ? {
+              ...t,
+              type: targetEntry.type,
+              title: targetEntry.title,
+              docId: targetEntry.docId,
+              tagId: targetEntry.tagId,
+            }
           : t
       ),
       tabHistories: {
@@ -254,7 +334,13 @@ export const useNavigationStore = create<NavigationState>((set, get) => ({
     set((s) => ({
       tabs: s.tabs.map((t) =>
         t.id === s.activeTabId
-          ? { ...t, type: targetEntry.type, title: targetEntry.title, docId: targetEntry.docId }
+          ? {
+              ...t,
+              type: targetEntry.type,
+              title: targetEntry.title,
+              docId: targetEntry.docId,
+              tagId: targetEntry.tagId,
+            }
           : t
       ),
       tabHistories: {
@@ -325,6 +411,7 @@ export const useNavigationStore = create<NavigationState>((set, get) => ({
         pageType: t.type,
         title: t.title,
         docId: t.docId,
+        tagId: t.tagId,
       })),
       activeTabType: activeTab?.type,
       activeDocId: activeTab?.docId,
@@ -348,6 +435,7 @@ export const useNavigationStore = create<NavigationState>((set, get) => ({
         type: (saved.pageType as PageType) || "all-docs",
         title: saved.title || getPageTitle(saved.pageType as PageType) || i18n.t("common:unnamed"),
         docId: saved.docId,
+        tagId: saved.tagId,
       }
       newTabs.push(tab)
 
@@ -355,6 +443,7 @@ export const useNavigationStore = create<NavigationState>((set, get) => ({
         type: tab.type,
         title: tab.title,
         docId: tab.docId,
+        tagId: tab.tagId,
       }
       newHistories[id] = { entries: [entry], currentIndex: 0 }
 

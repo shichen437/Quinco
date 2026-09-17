@@ -14,12 +14,19 @@ type ViewMode = "docs" | "tags"
 function AllDocsPage() {
   const { t } = useTranslation("common")
   const { t: tDocs } = useTranslation("docs")
-  const [viewMode, setViewMode] = useState<ViewMode>("docs")
+  const openDocInActiveTab = useTabStore((s) => s.openDocInActiveTab)
+  const openTagInActiveTab = useTabStore((s) => s.openTagInActiveTab)
+  const clearActiveTabTag = useTabStore((s) => s.clearActiveTabTag)
+  // 当前激活标签页要打开的标签 id（来自侧边栏点击 / 标签页历史导航）
+  const activeTagId = useTabStore((s) => {
+    const tab = s.tabs.find((t) => t.id === s.activeTabId)
+    return tab?.tagId
+  })
+
+  const [viewMode, setViewMode] = useState<ViewMode>(activeTagId ? "tags" : "docs")
   const [documents, setDocuments] = useState<Document[]>([])
   const [tags, setTags] = useState<TagDTO[]>([])
   const [loading, setLoading] = useState(true)
-
-  const openDocInActiveTab = useTabStore((s) => s.openDocInActiveTab)
 
   const loadDocuments = useCallback(async () => {
     try {
@@ -45,6 +52,13 @@ function AllDocsPage() {
     loader().finally(() => setLoading(false))
   }, [viewMode, loadDocuments, loadTags])
 
+  // 激活标签页需要打开某个标签时，确保切换到标签视图
+  useEffect(() => {
+    if (activeTagId) {
+      setViewMode("tags")
+    }
+  }, [activeTagId])
+
   const handleDocClick = useCallback(
     (doc: Document) => {
       openDocInActiveTab(doc.id, doc.title || t("unnamed"))
@@ -62,7 +76,10 @@ function AllDocsPage() {
               ? "bg-accent text-accent-foreground"
               : "text-muted-foreground hover:text-foreground"
           }`}
-          onClick={() => setViewMode("docs")}
+          onClick={() => {
+            setViewMode("docs")
+            clearActiveTabTag()
+          }}
         >
           <FileText className="size-4" />
           <span>{tDocs("docs")}</span>
@@ -89,7 +106,14 @@ function AllDocsPage() {
         ) : viewMode === "docs" ? (
           <DocsView documents={documents} onDocClick={handleDocClick} />
         ) : (
-          <TagsView tags={tags} onTagsChange={setTags} onDocClick={handleDocClick} />
+          <TagsView
+            tags={tags}
+            onTagsChange={setTags}
+            onDocClick={handleDocClick}
+            activeTagId={activeTagId}
+            onTagSelect={(tag) => openTagInActiveTab(tag.id)}
+            onBackToTags={() => clearActiveTabTag()}
+          />
         )}
       </main>
     </div>

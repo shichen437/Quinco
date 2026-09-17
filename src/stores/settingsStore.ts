@@ -9,6 +9,7 @@ export interface PersistedTab {
   pageType: string
   title?: string
   docId?: string
+  tagId?: number
 }
 
 /** Mirrors the backend TabSession structure */

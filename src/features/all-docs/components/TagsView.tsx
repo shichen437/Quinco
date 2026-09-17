@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 
 import { Hash, Loader2, Pencil, Trash2 } from "lucide-react"
 import { useTranslation } from "react-i18next"
@@ -23,6 +23,12 @@ interface TagsViewProps {
   tags: TagDTO[]
   onTagsChange: (tags: TagDTO[]) => void
   onDocClick: (doc: Document) => void
+  /** 外部请求打开的标签 id（侧边栏点击 / 标签页历史导航），为空时表示未激活 */
+  activeTagId?: number
+  /** 用户点击某个标签，请求在当前标签页内打开对应标签视图 */
+  onTagSelect: (tag: TagDTO) => void
+  /** 用户点击“全部标签”返回标签列表 */
+  onBackToTags: () => void
 }
 
 function TagDot({ color }: { color: string }) {
@@ -100,7 +106,14 @@ function EditTagForm({ defaultName, defaultColor, onSubmit }: EditTagFormProps) 
   )
 }
 
-function TagsView({ tags, onTagsChange, onDocClick }: TagsViewProps) {
+function TagsView({
+  tags,
+  onTagsChange,
+  onDocClick,
+  activeTagId,
+  onTagSelect,
+  onBackToTags,
+}: TagsViewProps) {
   const { t } = useTranslation("docs")
   const [editingTag, setEditingTag] = useState<TagDTO | null>(null)
   const [editLoading, setEditLoading] = useState(false)
@@ -145,25 +158,46 @@ function TagsView({ tags, onTagsChange, onDocClick }: TagsViewProps) {
     }
   }, [deletingTag, tags, onTagsChange, selectedTag])
 
-  const handleTagSelect = useCallback(async (tag: TagDTO) => {
+  // 同步外部请求（侧边栏标签点击 / 标签页历史导航）到标签视图。
+  // 仅当实际展示的 selectedTag 与请求不一致时才去加载，避免重复请求。
+  useEffect(() => {
+    if (!activeTagId) {
+      if (selectedTag) {
+        setSelectedTag(null)
+        setSelectedDocs([])
+      }
+      return
+    }
+
+    if (selectedTag?.id === activeTagId) return
+
+    const tag = tags.find((t) => t.id === activeTagId)
+    if (!tag) return // 标签列表尚未加载完成，等待 tags 变化后再选择
+
     setSelectedTag(tag)
     setDocsLoading(true)
-    try {
-      const docIds = await getTagDocs(tag.id)
-      const docs = await Promise.all(docIds.map((id) => getDocument(id)))
-      setSelectedDocs(docs)
-    } catch (err) {
-      console.error("Failed to load tag documents:", err)
-      setSelectedDocs([])
-    } finally {
-      setDocsLoading(false)
-    }
-  }, [])
+    getTagDocs(tag.id)
+      .then((docIds) => Promise.all(docIds.map((id) => getDocument(id))))
+      .then(setSelectedDocs)
+      .catch((err) => {
+        console.error("Failed to load tag documents:", err)
+        setSelectedDocs([])
+      })
+      .finally(() => setDocsLoading(false))
+  }, [activeTagId, tags, selectedTag])
+
+  const handleTagSelect = useCallback(
+    (tag: TagDTO) => {
+      onTagSelect(tag)
+    },
+    [onTagSelect]
+  )
 
   const handleBackToTags = useCallback(() => {
     setSelectedTag(null)
     setSelectedDocs([])
-  }, [])
+    onBackToTags()
+  }, [onBackToTags])
 
   if (tags.length === 0) {
     return (

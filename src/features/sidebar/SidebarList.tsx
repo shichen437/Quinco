@@ -54,6 +54,7 @@ interface SidebarTagListProps {
 
 export function SidebarTagList({ tags }: SidebarTagListProps) {
   const { t } = useTranslation("common")
+  const openTagInActiveTab = useTabStore((s) => s.openTagInActiveTab)
   if (tags.length === 0) {
     return (
       <Empty className="border-0 p-4">
@@ -65,7 +66,7 @@ export function SidebarTagList({ tags }: SidebarTagListProps) {
   return (
     <>
       {tags.map((tag) => (
-        <SidebarMenuButton className="px-4" key={tag.id}>
+        <SidebarMenuButton className="px-4" key={tag.id} onClick={() => openTagInActiveTab(tag.id)}>
           <TagDot color={tag.color as TagColor} />
           <span>{tag.name}</span>
         </SidebarMenuButton>
