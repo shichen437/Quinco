@@ -2,7 +2,8 @@ import { useEffect, useState } from "react"
 
 import { useTranslation } from "react-i18next"
 
-import { getDocument, type Document } from "@/api/tauri-bridge/document"
+import type { Document } from "@/api/tauri-bridge/document"
+import { callSilent } from "@/api/tauri-bridge/helper"
 import DocEmojiIcon from "@/components/common/DocEmojiIcon"
 import { cn } from "@/lib/utils"
 import { useTabStore } from "@/stores/navigationStore"
@@ -29,7 +30,7 @@ function DocReferenceView({ docId, className }: DocReferenceViewProps) {
 
     async function load() {
       try {
-        const document = await getDocument(docId)
+        const document = await callSilent<Document>("get_document", { id: docId })
         if (cancelled) return
         if (document.is_delete === 1) {
           setDoc(null)
