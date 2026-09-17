@@ -85,14 +85,10 @@ export interface UsageInfo {
 }
 
 export interface ChatStreamParams {
-  /** null/undefined 表示由后端 auto 选择 provider */
   provider: string | null
-  /** null/undefined 表示由后端 auto 选择 model */
   model: string | null
   message: string
-  /** 会话 id，必传 */
   sid: string
-  /** Workspace the session belongs to; falls back to current workspace when omitted */
   wid?: number
 }
 

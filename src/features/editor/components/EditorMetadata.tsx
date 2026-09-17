@@ -60,9 +60,12 @@ export default function EditorMetadata({ docId, createdAt, updatedAt }: EditorMe
   const loadTags = useCallback(async () => {
     if (!docId) return
     try {
-      const [docTags, workspaceTags] = await Promise.all([getDocTags(docId), getWorkspaceTags()])
+      const [docTags, workspaceTagsRes] = await Promise.all([
+        getDocTags(docId),
+        getWorkspaceTags(1, 100),
+      ])
       setSelectedTags(docTags.map(toTag))
-      setAllTags(workspaceTags.map(toTag))
+      setAllTags(workspaceTagsRes.items.map(toTag))
     } catch (err) {
       console.error("Failed to load tags:", err)
     }

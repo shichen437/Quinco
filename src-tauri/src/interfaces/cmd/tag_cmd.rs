@@ -2,6 +2,7 @@ use tauri::State;
 
 use crate::application::tag_use_case::TagUseCase;
 use crate::infrastructure::repo_impl::tag_repo_impl::TagRepoImpl;
+use crate::interfaces::dto::page::Paginated;
 use crate::interfaces::dto::tag::TagDto;
 use crate::shared::error::DomainError;
 use crate::shared::state::AppState;
@@ -10,13 +11,20 @@ use crate::shared::state::AppState;
 pub async fn get_workspace_tags(
     state: State<'_, AppState>,
     wid: i64,
-) -> Result<Vec<TagDto>, String> {
+    page: i64,
+    page_size: i64,
+) -> Result<Paginated<TagDto>, String> {
     let repo = TagRepoImpl::new(state.db.clone());
     let use_case = TagUseCase::new(repo);
     use_case
-        .get_workspace_tags(wid)
+        .get_workspace_tags_paged(wid, page, page_size)
         .await
-        .map(|tags| tags.into_iter().map(TagDto::from).collect())
+        .map(|p| Paginated {
+            items: p.items.into_iter().map(TagDto::from).collect(),
+            total: p.total,
+            page: p.page,
+            page_size: p.page_size,
+        })
         .map_err(DomainError::into_api_json)
 }
 

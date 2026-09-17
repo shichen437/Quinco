@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useState } from "react"
 
-import { FileText, Hash, Loader2 } from "lucide-react"
+import { FileText, Hash } from "lucide-react"
 import { useTranslation } from "react-i18next"
 
-import { getWorkspaceDocuments, type Document } from "@/api/tauri-bridge/document"
-import { getWorkspaceTags, type TagDTO } from "@/api/tauri-bridge/tag"
+import type { Document } from "@/api/tauri-bridge/document"
 import DocsView from "@/features/all-docs/components/DocsView"
 import TagsView from "@/features/all-docs/components/TagsView"
 import { useTabStore } from "@/stores/navigationStore"
@@ -24,38 +23,19 @@ function AllDocsPage() {
   })
 
   const [viewMode, setViewMode] = useState<ViewMode>(activeTagId ? "tags" : "docs")
-  const [documents, setDocuments] = useState<Document[]>([])
-  const [tags, setTags] = useState<TagDTO[]>([])
-  const [loading, setLoading] = useState(true)
+  const [reloadKey, setReloadKey] = useState(0)
 
-  const loadDocuments = useCallback(async () => {
-    try {
-      const docs = await getWorkspaceDocuments()
-      setDocuments(docs)
-    } catch (err) {
-      console.error("Failed to load documents:", err)
-    }
+  // 切换视图时递增 reloadKey，触发子组件重新加载并回到第一页
+  const switchView = useCallback((mode: ViewMode) => {
+    setViewMode(mode)
+    setReloadKey((k) => k + 1)
   }, [])
-
-  const loadTags = useCallback(async () => {
-    try {
-      const result = await getWorkspaceTags()
-      setTags(result)
-    } catch (err) {
-      console.error("Failed to load tags:", err)
-    }
-  }, [])
-
-  useEffect(() => {
-    setLoading(true)
-    const loader = viewMode === "docs" ? loadDocuments : loadTags
-    loader().finally(() => setLoading(false))
-  }, [viewMode, loadDocuments, loadTags])
 
   // 激活标签页需要打开某个标签时，确保切换到标签视图
   useEffect(() => {
     if (activeTagId) {
       setViewMode("tags")
+      setReloadKey((k) => k + 1)
     }
   }, [activeTagId])
 
@@ -77,7 +57,7 @@ function AllDocsPage() {
               : "text-muted-foreground hover:text-foreground"
           }`}
           onClick={() => {
-            setViewMode("docs")
+            switchView("docs")
             clearActiveTabTag()
           }}
         >
@@ -91,7 +71,7 @@ function AllDocsPage() {
               ? "bg-accent text-accent-foreground"
               : "text-muted-foreground hover:text-foreground"
           }`}
-          onClick={() => setViewMode("tags")}
+          onClick={() => switchView("tags")}
         >
           <Hash className="size-4" />
           <span>{tDocs("tags")}</span>
@@ -99,16 +79,11 @@ function AllDocsPage() {
       </header>
 
       <main className="flex-1 overflow-y-auto px-12 pb-8">
-        {loading ? (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="size-5 animate-spin text-muted-foreground" />
-          </div>
-        ) : viewMode === "docs" ? (
-          <DocsView documents={documents} onDocClick={handleDocClick} />
+        {viewMode === "docs" ? (
+          <DocsView key={`docs-${reloadKey}`} onDocClick={handleDocClick} reloadKey={reloadKey} />
         ) : (
           <TagsView
-            tags={tags}
-            onTagsChange={setTags}
+            key={`tags-${reloadKey}`}
             onDocClick={handleDocClick}
             activeTagId={activeTagId}
             onTagSelect={(tag) => openTagInActiveTab(tag.id)}

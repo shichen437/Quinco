@@ -19,15 +19,12 @@ export interface ChatMessage {
 interface AiChatState {
   open: boolean
   messages: ChatMessage[]
-  /** Currently active chat session id (null = new/unsaved chat) */
   currentSessionId: string | null
-  /** Chat sessions of the current workspace, shown in the history list */
   sessions: ChatSession[]
   loading: boolean
   abort: (() => void) | null
   selectedProvider: string | null
   selectedModel: string | null
-  /** Non-null when the latest stream produced an error (cleared on next send) */
   streamError: string | null
   toggle: () => void
   openPanel: () => void
@@ -38,18 +35,12 @@ interface AiChatState {
   setLoading: (loading: boolean) => void
   setAbort: (fn: (() => void) | null) => void
   setStreamError: (msg: string | null) => void
-  /** 重置视图开始全新对话（仅清空前端状态，实际会话在首次发消息时创建） */
   startNewSession: () => void
   setCurrentSessionId: (sid: string | null) => void
-  /** Load persisted session (meta + messages) and switch into it */
   loadSession: (sid: string) => Promise<void>
-  /** List persisted chat sessions of a workspace */
   loadSessionList: (wid: number) => Promise<ChatSession[]>
-  /** Fetch and store the chat session list of the given workspace */
   refreshSessions: (wid: number) => Promise<void>
-  /** Delete a session; resets the view if it was the active one */
   deleteSession: (sid: string) => Promise<void>
-  /** Load a session into the chat view */
   openSession: (sid: string) => Promise<void>
   setSelectedModel: (provider: string | null, model: string | null) => void
 }

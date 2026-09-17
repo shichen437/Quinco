@@ -1,5 +1,14 @@
 import { call, callWithWorkspace } from "./helper"
 
+export const DEFAULT_PAGE_SIZE = 20
+
+export interface Paginated<T> {
+  items: T[]
+  total: number
+  page: number
+  page_size: number
+}
+
 export interface Document {
   id: string
   title: string
@@ -71,16 +80,28 @@ export async function getBacklinks(docId: string): Promise<Document[]> {
   return call<Document[]>("get_backlinks", { docId })
 }
 
-export async function getWorkspaceDocuments(): Promise<Document[]> {
-  return callWithWorkspace<Document[]>("get_workspace_documents")
+export async function getWorkspaceDocuments(
+  page = 1,
+  pageSize = DEFAULT_PAGE_SIZE
+): Promise<Paginated<Document>> {
+  return callWithWorkspace<Paginated<Document>>("get_workspace_documents", {
+    page,
+    pageSize,
+  })
 }
 
 export async function getFavoriteDocuments(): Promise<Document[]> {
   return callWithWorkspace<Document[]>("get_favorite_documents")
 }
 
-export async function getDeletedDocuments(): Promise<Document[]> {
-  return callWithWorkspace<Document[]>("get_deleted_documents")
+export async function getDeletedDocuments(
+  page = 1,
+  pageSize = DEFAULT_PAGE_SIZE
+): Promise<Paginated<Document>> {
+  return callWithWorkspace<Paginated<Document>>("get_deleted_documents", {
+    page,
+    pageSize,
+  })
 }
 
 export async function getRecentDocuments(pageSize: number): Promise<Document[]> {

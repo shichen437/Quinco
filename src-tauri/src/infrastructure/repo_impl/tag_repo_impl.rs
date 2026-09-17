@@ -4,6 +4,7 @@ use sqlx::SqlitePool;
 
 use crate::domain::tag::entity::{NewTag, Tag};
 use crate::domain::tag::repo::TagRepository;
+use crate::interfaces::dto::page::normalize_page;
 use crate::shared::error::DomainError;
 
 #[derive(sqlx::FromRow)]
@@ -45,15 +46,38 @@ impl TagRepoImpl {
 
 #[async_trait]
 impl TagRepository for TagRepoImpl {
-    async fn get_by_workspace(&self, wid: i64) -> Result<Vec<Tag>, DomainError> {
-        sqlx::query_as::<_, TagRow>(&format!(
-            "SELECT {TAG_COLUMNS} FROM sys_tag WHERE wid = ? ORDER BY created_at DESC"
-        ))
-        .bind(wid)
-        .fetch_all(&self.pool)
-        .await
-        .map_err(DomainError::infra)
-        .map(|rows| rows.into_iter().map(Tag::from).collect())
+    async fn get_by_workspace_paged(
+        &self,
+        wid: i64,
+        page: i64,
+        page_size: i64,
+    ) -> Result<(Vec<Tag>, i64), DomainError> {
+        let (_page, page_size, offset) = normalize_page(page, page_size, 20, 100);
+
+        let total: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM sys_tag WHERE wid = ?")
+            .bind(wid)
+            .fetch_one(&self.pool)
+            .await
+            .map_err(DomainError::infra)?;
+
+        let items = if total == 0 {
+            Vec::new()
+        } else {
+            sqlx::query_as::<_, TagRow>(&format!(
+                "SELECT {TAG_COLUMNS} FROM sys_tag WHERE wid = ? ORDER BY created_at DESC LIMIT ? OFFSET ?"
+            ))
+            .bind(wid)
+            .bind(page_size)
+            .bind(offset)
+            .fetch_all(&self.pool)
+            .await
+            .map_err(DomainError::infra)?
+            .into_iter()
+            .map(Tag::from)
+            .collect()
+        };
+
+        Ok((items, total))
     }
 
     async fn find_by_name(&self, wid: i64, name: &str) -> Result<Option<Tag>, DomainError> {

@@ -98,8 +98,8 @@ export function SidebarTags() {
   const [tags, setTags] = React.useState<TagDTO[]>([])
 
   useEffect(() => {
-    getWorkspaceTags()
-      .then(setTags)
+    getWorkspaceTags(1, 100)
+      .then((res) => setTags(res.items))
       .catch((err) => console.error("Failed to load workspace tags:", err))
   }, [])
 

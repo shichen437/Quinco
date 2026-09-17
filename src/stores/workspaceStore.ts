@@ -18,23 +18,16 @@ interface WorkspaceState {
 }
 
 interface WorkspaceActions {
-  /** Initialize workspace from backend (call on app mount) */
   initialize: () => Promise<void>
-  /** Switch to a workspace by id */
   switchTo: (id: number) => Promise<void>
-  /** Create a new workspace without switching */
   create: (name: string) => Promise<Workspace>
-  /** Create a new workspace and switch to it */
   createAndSwitch: (name: string) => Promise<void>
-  /** Refresh current workspace info from backend */
   refresh: () => Promise<void>
-  /** Rename current workspace */
   rename: (id: number, name: string) => Promise<Workspace>
 }
 
 export type WorkspaceStore = WorkspaceState & WorkspaceActions
 
-/** Runs an async action with standardized loading/error state management. */
 async function withLoading<R>(
   set: (partial: Partial<WorkspaceState>) => void,
   action: () => Promise<R>
@@ -88,20 +81,14 @@ export const useWorkspaceStore = create<WorkspaceStore>((set) => ({
   },
 }))
 
-/** Convenience hook to get current workspace ID */
 export function useCurrentWid(): number | null {
   return useWorkspaceStore((s) => s.currentWid)
 }
 
-/** Convenience hook to get current workspace */
 export function useCurrentWorkspace(): Workspace | null {
   return useWorkspaceStore((s) => s.currentWorkspace)
 }
 
-/**
- * Ensure workspace ID is available in the store.
- * Calls getCurrentWorkspace only if currentWid is null/undefined/0.
- */
 export async function ensureWorkspaceReady(): Promise<number> {
   const state = useWorkspaceStore.getState()
   if (state.currentWid) {

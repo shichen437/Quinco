@@ -11,11 +11,21 @@ pub trait DocumentRepository: Send + Sync {
 
     async fn get_by_id_including_deleted(&self, id: &str) -> Result<Document, DomainError>;
 
-    async fn get_by_workspace(&self, wid: i64) -> Result<Vec<Document>, DomainError>;
+    async fn get_by_workspace_paged(
+        &self,
+        wid: i64,
+        page: i64,
+        page_size: i64,
+    ) -> Result<(Vec<Document>, i64), DomainError>;
 
     async fn get_favorites(&self, wid: i64) -> Result<Vec<Document>, DomainError>;
 
-    async fn get_deleted(&self, wid: i64) -> Result<Vec<Document>, DomainError>;
+    async fn get_deleted_paged(
+        &self,
+        wid: i64,
+        page: i64,
+        page_size: i64,
+    ) -> Result<(Vec<Document>, i64), DomainError>;
 
     async fn get_recent_documents(
         &self,

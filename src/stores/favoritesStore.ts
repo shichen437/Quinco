@@ -59,7 +59,6 @@ export const useFavoritesStore = create<FavoritesState>((set, get) => ({
   },
 }))
 
-/** Memoized Set of favorite document IDs — reference stays stable across re-renders. */
 export function useFavoriteIds(): Set<string> {
   const favorites = useFavoritesStore((s) => s.favorites)
   // eslint-disable-next-line react-hooks/exhaustive-deps -- favorites identity is the true dep

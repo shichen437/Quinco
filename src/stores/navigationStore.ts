@@ -11,7 +11,6 @@ export interface Tab {
   title: string
   docId?: string
   emoji?: string
-  /** 全部文档页-标签视图下当前打开的标签 id */
   tagId?: number
 }
 
@@ -31,7 +30,6 @@ interface NavigationState {
   tabs: Tab[]
   activeTabId: string | null
   tabHistories: Record<string, TabHistory>
-  /** Set to true once a saved session has been restored (prevents initial auto-save) */
   sessionRestored: boolean
 
   addTab: (type: PageType, title?: string, docId?: string) => void
@@ -42,9 +40,7 @@ interface NavigationState {
   updateTabTitle: (id: string, title: string) => void
   updateTabDocId: (id: string, docId: string) => void
   openDocInActiveTab: (docId: string, title: string) => void
-  /** 在当前激活标签页内打开“全部文档-标签视图-指定标签” */
   openTagInActiveTab: (tagId: number) => void
-  /** 清除当前激活标签页的标签视图状态（返回全部标签列表） */
   clearActiveTabTag: () => void
 
   goBack: () => void
@@ -55,11 +51,8 @@ interface NavigationState {
   getCurrentEntry: (tabId: string) => HistoryEntry | null
   removeDocFromHistory: (docId: string) => void
 
-  /** Serialize current tabs into a TabSession for persistence */
   exportSession: () => TabSession
-  /** Restore tabs from a saved session, returns true if any tabs were restored */
   restoreFromSession: (session: TabSession) => boolean
-  /** Trigger saving the current session to backend */
   saveSession: () => Promise<void>
 }
 

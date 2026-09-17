@@ -6,6 +6,7 @@ use crate::domain::document::entity::{
     DocExt, DocLink, DocType, Document, LinkChanges, NewDocument, UpdateDocContent,
 };
 use crate::domain::document::repo::DocumentRepository;
+use crate::interfaces::dto::page::normalize_page;
 use crate::shared::error::DomainError;
 
 #[derive(sqlx::FromRow)]
@@ -118,15 +119,39 @@ impl DocumentRepository for DocumentRepoImpl {
         self.load_raw_by_id(id).await.map(Document::from)
     }
 
-    async fn get_by_workspace(&self, wid: i64) -> Result<Vec<Document>, DomainError> {
-        sqlx::query_as::<_, DocumentRow>(&format!(
-            "SELECT {DOC_COLUMNS} FROM sys_doc WHERE wid = ? AND is_delete = 0 ORDER BY updated_at DESC"
-        ))
-        .bind(wid)
-        .fetch_all(&self.pool)
-        .await
-        .map_err(DomainError::infra)
-        .map(|rows| rows.into_iter().map(Document::from).collect())
+    async fn get_by_workspace_paged(
+        &self,
+        wid: i64,
+        page: i64,
+        page_size: i64,
+    ) -> Result<(Vec<Document>, i64), DomainError> {
+        let (_page, page_size, offset) = normalize_page(page, page_size, 20, 100);
+
+        let total: i64 =
+            sqlx::query_scalar("SELECT COUNT(*) FROM sys_doc WHERE wid = ? AND is_delete = 0")
+                .bind(wid)
+                .fetch_one(&self.pool)
+                .await
+                .map_err(DomainError::infra)?;
+
+        let items = if total == 0 {
+            Vec::new()
+        } else {
+            sqlx::query_as::<_, DocumentRow>(&format!(
+                "SELECT {DOC_COLUMNS} FROM sys_doc WHERE wid = ? AND is_delete = 0 ORDER BY updated_at DESC LIMIT ? OFFSET ?"
+            ))
+            .bind(wid)
+            .bind(page_size)
+            .bind(offset)
+            .fetch_all(&self.pool)
+            .await
+            .map_err(DomainError::infra)?
+            .into_iter()
+            .map(Document::from)
+            .collect()
+        };
+
+        Ok((items, total))
     }
 
     async fn get_favorites(&self, wid: i64) -> Result<Vec<Document>, DomainError> {
@@ -140,15 +165,39 @@ impl DocumentRepository for DocumentRepoImpl {
         .map(|rows| rows.into_iter().map(Document::from).collect())
     }
 
-    async fn get_deleted(&self, wid: i64) -> Result<Vec<Document>, DomainError> {
-        sqlx::query_as::<_, DocumentRow>(&format!(
-            "SELECT {DOC_COLUMNS} FROM sys_doc WHERE wid = ? AND is_delete = 1 ORDER BY deleted_at DESC"
-        ))
-        .bind(wid)
-        .fetch_all(&self.pool)
-        .await
-        .map_err(DomainError::infra)
-        .map(|rows| rows.into_iter().map(Document::from).collect())
+    async fn get_deleted_paged(
+        &self,
+        wid: i64,
+        page: i64,
+        page_size: i64,
+    ) -> Result<(Vec<Document>, i64), DomainError> {
+        let (_page, page_size, offset) = normalize_page(page, page_size, 20, 100);
+
+        let total: i64 =
+            sqlx::query_scalar("SELECT COUNT(*) FROM sys_doc WHERE wid = ? AND is_delete = 1")
+                .bind(wid)
+                .fetch_one(&self.pool)
+                .await
+                .map_err(DomainError::infra)?;
+
+        let items = if total == 0 {
+            Vec::new()
+        } else {
+            sqlx::query_as::<_, DocumentRow>(&format!(
+                "SELECT {DOC_COLUMNS} FROM sys_doc WHERE wid = ? AND is_delete = 1 ORDER BY deleted_at DESC LIMIT ? OFFSET ?"
+            ))
+            .bind(wid)
+            .bind(page_size)
+            .bind(offset)
+            .fetch_all(&self.pool)
+            .await
+            .map_err(DomainError::infra)?
+            .into_iter()
+            .map(Document::from)
+            .collect()
+        };
+
+        Ok((items, total))
     }
 
     async fn get_recent_documents(

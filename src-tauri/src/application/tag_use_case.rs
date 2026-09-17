@@ -1,5 +1,6 @@
 use crate::domain::tag::entity::NewTag;
 use crate::domain::tag::repo::TagRepository;
+use crate::interfaces::dto::page::Paginated;
 use crate::shared::error::DomainError;
 
 pub struct TagUseCase<R: TagRepository> {
@@ -11,11 +12,17 @@ impl<R: TagRepository> TagUseCase<R> {
         Self { repo }
     }
 
-    pub async fn get_workspace_tags(
+    pub async fn get_workspace_tags_paged(
         &self,
         wid: i64,
-    ) -> Result<Vec<crate::domain::tag::entity::Tag>, DomainError> {
-        self.repo.get_by_workspace(wid).await
+        page: i64,
+        page_size: i64,
+    ) -> Result<Paginated<crate::domain::tag::entity::Tag>, DomainError> {
+        let (items, total) = self
+            .repo
+            .get_by_workspace_paged(wid, page, page_size)
+            .await?;
+        Ok(Paginated::new(items, total, page, page_size))
     }
 
     pub async fn get_doc_tags(

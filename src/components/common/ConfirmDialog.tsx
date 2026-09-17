@@ -24,9 +24,7 @@ interface ConfirmDialogProps {
   destructive?: boolean
   onConfirm: () => Promise<void>
   onSuccess?: () => void
-  /** 需要用户输入确认值后才能操作，提供时显示输入框 */
   confirmValue?: string
-  /** 输入框的占位文本 */
   confirmPlaceholder?: string
 }
 

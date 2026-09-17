@@ -4,7 +4,6 @@ import { getErrorMessage } from "@/api/tauri-bridge/helper"
 import { getConfig, setConfig, type Config } from "@/api/tauri-bridge/system"
 import i18n from "@/i18n"
 
-/** Mirrors the backend PersistedTab structure */
 export interface PersistedTab {
   pageType: string
   title?: string
@@ -12,7 +11,6 @@ export interface PersistedTab {
   tagId?: number
 }
 
-/** Mirrors the backend TabSession structure */
 export interface TabSession {
   tabs: PersistedTab[]
   activeTabType?: string
@@ -27,19 +25,12 @@ interface SettingsState {
 }
 
 interface SettingsActions {
-  /** Load config from backend (call on app mount) */
   initialize: () => Promise<void>
-  /** Update a single config value and persist to backend */
   update: (update: Partial<Config>) => Promise<void>
-  /** Update theme only */
   setTheme: (theme: string) => Promise<void>
-  /** Update language only */
   setLang: (lang: string) => Promise<void>
-  /** Update aiEnabled only */
   setAiEnabled: (enabled: boolean) => Promise<void>
-  /** Persist the current tab session to backend */
   saveTabSession: (session: TabSession) => Promise<void>
-  /** Load the saved tab session from backend (returns null if none saved) */
   loadTabSession: () => Promise<TabSession | null>
 }
 
@@ -128,7 +119,6 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
   },
 }))
 
-/** Convenience hook to get current config */
 export function useConfig(): Config | null {
   return useSettingsStore((s) => s.config)
 }

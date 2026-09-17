@@ -4,7 +4,13 @@ import { Hash, Loader2, Pencil, Trash2 } from "lucide-react"
 import { useTranslation } from "react-i18next"
 
 import { getDocument, type Document } from "@/api/tauri-bridge/document"
-import { deleteTag, getTagDocs, updateTag, type TagDTO } from "@/api/tauri-bridge/tag"
+import {
+  deleteTag,
+  getTagDocs,
+  getWorkspaceTags,
+  updateTag,
+  type TagDTO,
+} from "@/api/tauri-bridge/tag"
 import ConfirmDialog from "@/components/common/ConfirmDialog"
 import {
   Dialog,
@@ -16,18 +22,23 @@ import {
 } from "@/components/ui/dialog"
 import { Empty, EmptyDescription, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
 import { Input } from "@/components/ui/input"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
 import DocList from "@/features/all-docs/components/DocList"
+import { buildPages } from "@/lib/pagination"
 import { TAG_COLORS } from "@/lib/tag_color"
 
 interface TagsViewProps {
-  tags: TagDTO[]
-  onTagsChange: (tags: TagDTO[]) => void
   onDocClick: (doc: Document) => void
-  /** 外部请求打开的标签 id（侧边栏点击 / 标签页历史导航），为空时表示未激活 */
   activeTagId?: number
-  /** 用户点击某个标签，请求在当前标签页内打开对应标签视图 */
   onTagSelect: (tag: TagDTO) => void
-  /** 用户点击“全部标签”返回标签列表 */
   onBackToTags: () => void
 }
 
@@ -106,15 +117,14 @@ function EditTagForm({ defaultName, defaultColor, onSubmit }: EditTagFormProps) 
   )
 }
 
-function TagsView({
-  tags,
-  onTagsChange,
-  onDocClick,
-  activeTagId,
-  onTagSelect,
-  onBackToTags,
-}: TagsViewProps) {
+function TagsView({ onDocClick, activeTagId, onTagSelect, onBackToTags }: TagsViewProps) {
   const { t } = useTranslation("docs")
+  const [tags, setTags] = useState<TagDTO[]>([])
+  const [tagsTotal, setTagsTotal] = useState(0)
+  const [tagPage, setTagPage] = useState(1)
+  const [tagPageSize] = useState(20)
+  const [tagsLoading, setTagsLoading] = useState(true)
+
   const [editingTag, setEditingTag] = useState<TagDTO | null>(null)
   const [editLoading, setEditLoading] = useState(false)
   const [deletingTag, setDeletingTag] = useState<TagDTO | null>(null)
@@ -124,13 +134,38 @@ function TagsView({
   const [selectedDocs, setSelectedDocs] = useState<Document[]>([])
   const [docsLoading, setDocsLoading] = useState(false)
 
+  // 加载标签列表（分页）
+  useEffect(() => {
+    let cancelled = false
+    setTagsLoading(true)
+    getWorkspaceTags(tagPage, tagPageSize)
+      .then((res) => {
+        if (cancelled) return
+        setTags(res.items)
+        setTagsTotal(res.total)
+      })
+      .catch((err) => {
+        console.error("Failed to load tags:", err)
+        if (!cancelled) {
+          setTags([])
+          setTagsTotal(0)
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setTagsLoading(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [tagPage, tagPageSize])
+
   const handleEditSubmit = useCallback(
     async (name: string, color: string) => {
       if (!editingTag) return
       setEditLoading(true)
       try {
         const updated = await updateTag(editingTag.id, name, color)
-        onTagsChange(tags.map((t) => (t.id === updated.id ? updated : t)))
+        setTags((prev) => prev.map((tag) => (tag.id === updated.id ? updated : tag)))
         setEditingTag(null)
       } catch (err) {
         console.error("Failed to update tag:", err)
@@ -138,7 +173,7 @@ function TagsView({
         setEditLoading(false)
       }
     },
-    [editingTag, tags, onTagsChange]
+    [editingTag]
   )
 
   const handleDeleteConfirm = useCallback(async () => {
@@ -146,7 +181,8 @@ function TagsView({
     setDeleteLoading(true)
     try {
       await deleteTag(deletingTag.id)
-      onTagsChange(tags.filter((t) => t.id !== deletingTag.id))
+      setTags((prev) => prev.filter((tag) => tag.id !== deletingTag.id))
+      setTagsTotal((prev) => Math.max(0, prev - 1))
       if (selectedTag?.id === deletingTag.id) {
         setSelectedTag(null)
         setSelectedDocs([])
@@ -156,7 +192,7 @@ function TagsView({
     } finally {
       setDeleteLoading(false)
     }
-  }, [deletingTag, tags, onTagsChange, selectedTag])
+  }, [deletingTag, selectedTag])
 
   // 同步外部请求（侧边栏标签点击 / 标签页历史导航）到标签视图。
   // 仅当实际展示的 selectedTag 与请求不一致时才去加载，避免重复请求。
@@ -171,7 +207,7 @@ function TagsView({
 
     if (selectedTag?.id === activeTagId) return
 
-    const tag = tags.find((t) => t.id === activeTagId)
+    const tag = tags.find((tt) => tt.id === activeTagId)
     if (!tag) return // 标签列表尚未加载完成，等待 tags 变化后再选择
 
     setSelectedTag(tag)
@@ -199,15 +235,62 @@ function TagsView({
     onBackToTags()
   }, [onBackToTags])
 
-  if (tags.length === 0) {
+  const renderTagPagination = () => {
+    const totalPages = Math.max(1, Math.ceil(tagsTotal / tagPageSize))
+    if (totalPages <= 1) return null
+    const safePage = Math.min(tagPage, totalPages)
+    const pageNumbers = buildPages(safePage, totalPages)
     return (
-      <Empty className="border-0">
-        <EmptyMedia variant="icon">
-          <Hash className="size-6" />
-        </EmptyMedia>
-        <EmptyTitle>{t("noTags")}</EmptyTitle>
-        <EmptyDescription>{t("noTagsDesc")}</EmptyDescription>
-      </Empty>
+      <Pagination className="pt-2">
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious
+              className={safePage <= 1 ? "pointer-events-none opacity-40" : undefined}
+              onClick={(e) => {
+                e.preventDefault()
+                if (safePage > 1) setTagPage(safePage - 1)
+              }}
+            />
+          </PaginationItem>
+          {pageNumbers.map((p, i) =>
+            typeof p === "number" ? (
+              <PaginationItem key={p}>
+                <PaginationLink
+                  isActive={p === safePage}
+                  size="icon-xs"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    setTagPage(p)
+                  }}
+                >
+                  {p}
+                </PaginationLink>
+              </PaginationItem>
+            ) : (
+              <PaginationItem key={`${p}-${i}`}>
+                <PaginationEllipsis />
+              </PaginationItem>
+            )
+          )}
+          <PaginationItem>
+            <PaginationNext
+              className={safePage >= totalPages ? "pointer-events-none opacity-40" : undefined}
+              onClick={(e) => {
+                e.preventDefault()
+                if (safePage < totalPages) setTagPage(safePage + 1)
+              }}
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
+    )
+  }
+
+  if (tagsLoading && tags.length === 0) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="size-5 animate-spin text-muted-foreground" />
+      </div>
     )
   }
 
@@ -253,6 +336,18 @@ function TagsView({
           </div>
         )}
       </>
+    )
+  }
+
+  if (tags.length === 0 && tagsTotal === 0) {
+    return (
+      <Empty className="border-0">
+        <EmptyMedia variant="icon">
+          <Hash className="size-6" />
+        </EmptyMedia>
+        <EmptyTitle>{t("noTags")}</EmptyTitle>
+        <EmptyDescription>{t("noTagsDesc")}</EmptyDescription>
+      </Empty>
     )
   }
 
@@ -305,6 +400,8 @@ function TagsView({
             </div>
           ))}
         </div>
+
+        {renderTagPagination()}
       </div>
 
       <Dialog open={!!editingTag} onOpenChange={(open) => !open && setEditingTag(null)}>

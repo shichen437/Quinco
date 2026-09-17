@@ -16,17 +16,14 @@ export interface Config {
   lang: string
   lastTab: string
   aiEnabled: boolean
-  /** JSON-serialized TabSession for restoring open tabs on restart */
   openTabs: string
 }
 
-/** Fields that can be updated - all optional for partial updates */
 export interface ConfigUpdate {
   theme?: string
   lang?: string
   lastTab?: string
   aiEnabled?: boolean
-  /** JSON-serialized TabSession */
   openTabs?: string
 }
 

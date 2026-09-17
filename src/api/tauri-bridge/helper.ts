@@ -53,10 +53,6 @@ export function call<T>(cmd: string, args?: Record<string, unknown>): Promise<T>
   })
 }
 
-/**
- * 与 call 相同，但错误时不弹 toast，归一化后直接 reject。
- * 适用于调用方自行处理错误展示（如 docReference 组件展示"已删除"样式）的场景。
- */
 export function callSilent<T>(cmd: string, args?: Record<string, unknown>): Promise<T> {
   return invoke<T>(cmd, args).catch((err: unknown) => {
     const normalized = parseError(err)
@@ -64,10 +60,6 @@ export function callSilent<T>(cmd: string, args?: Record<string, unknown>): Prom
   })
 }
 
-/**
- * Invoke a Tauri command that requires a workspace ID.
- * Automatically resolves the current workspace before calling.
- */
 export async function callWithWorkspace<T>(
   cmd: string,
   args: Record<string, unknown> = {}

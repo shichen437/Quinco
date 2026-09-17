@@ -1,3 +1,4 @@
+import type { Paginated } from "./document"
 import { call, callWithWorkspace } from "./helper"
 
 export interface TagDTO {
@@ -9,8 +10,11 @@ export interface TagDTO {
   updated_at: string | null
 }
 
-export async function getWorkspaceTags(): Promise<TagDTO[]> {
-  return callWithWorkspace<TagDTO[]>("get_workspace_tags")
+export async function getWorkspaceTags(page = 1, pageSize = 20): Promise<Paginated<TagDTO>> {
+  return callWithWorkspace<Paginated<TagDTO>>("get_workspace_tags", {
+    page,
+    pageSize,
+  })
 }
 
 export async function getDocTags(docId: string): Promise<TagDTO[]> {

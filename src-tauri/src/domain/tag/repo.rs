@@ -5,7 +5,12 @@ use crate::shared::error::DomainError;
 
 #[async_trait]
 pub trait TagRepository: Send + Sync {
-    async fn get_by_workspace(&self, wid: i64) -> Result<Vec<Tag>, DomainError>;
+    async fn get_by_workspace_paged(
+        &self,
+        wid: i64,
+        page: i64,
+        page_size: i64,
+    ) -> Result<(Vec<Tag>, i64), DomainError>;
 
     async fn find_by_name(&self, wid: i64, name: &str) -> Result<Option<Tag>, DomainError>;
 
