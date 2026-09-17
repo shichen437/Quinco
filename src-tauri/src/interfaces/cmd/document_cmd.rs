@@ -128,6 +128,16 @@ pub async fn hard_delete_document(state: State<'_, AppState>, id: String) -> Res
 }
 
 #[tauri::command]
+pub async fn empty_trash(state: State<'_, AppState>, wid: i64) -> Result<(), String> {
+    let repo = DocumentRepoImpl::new(state.db.clone());
+    let use_case = DocumentUseCase::new(repo);
+    use_case
+        .empty_trash(wid)
+        .await
+        .map_err(DomainError::into_api_json)
+}
+
+#[tauri::command]
 pub async fn toggle_favorite_document(
     state: State<'_, AppState>,
     id: String,

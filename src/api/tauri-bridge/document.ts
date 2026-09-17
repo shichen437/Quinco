@@ -68,6 +68,10 @@ export async function hardDeleteDocument(id: string): Promise<void> {
   return call<void>("hard_delete_document", { id })
 }
 
+export async function emptyTrash(): Promise<void> {
+  return callWithWorkspace<void>("empty_trash")
+}
+
 export async function toggleFavoriteDocument(id: string): Promise<number> {
   return call<number>("toggle_favorite_document", { id })
 }

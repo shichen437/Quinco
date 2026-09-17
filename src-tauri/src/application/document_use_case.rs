@@ -140,6 +140,10 @@ impl<R: DocumentRepository> DocumentUseCase<R> {
         self.repo.hard_delete(id).await
     }
 
+    pub async fn empty_trash(&self, wid: i64) -> Result<(), DomainError> {
+        self.repo.hard_delete_all_trashed(wid).await
+    }
+
     pub async fn toggle_lock(&self, id: &str) -> Result<bool, DomainError> {
         let mut doc = self.repo.get_by_id(id).await?;
         let new_status = doc.toggle_lock()?;

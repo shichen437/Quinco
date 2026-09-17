@@ -21,6 +21,7 @@ macro_rules! quinco_commands {
             crate::interfaces::cmd::document_cmd::soft_delete_document,
             crate::interfaces::cmd::document_cmd::restore_document,
             crate::interfaces::cmd::document_cmd::hard_delete_document,
+            crate::interfaces::cmd::document_cmd::empty_trash,
             crate::interfaces::cmd::document_cmd::toggle_favorite_document,
             crate::interfaces::cmd::document_cmd::get_favorite_documents,
             crate::interfaces::cmd::document_cmd::get_deleted_documents,

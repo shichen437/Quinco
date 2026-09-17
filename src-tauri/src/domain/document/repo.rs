@@ -58,6 +58,8 @@ pub trait DocumentRepository: Send + Sync {
 
     async fn hard_delete_all_by_workspace(&self, wid: i64) -> Result<(), DomainError>;
 
+    async fn hard_delete_all_trashed(&self, wid: i64) -> Result<(), DomainError>;
+
     async fn get_backlinks(&self, doc_id: &str) -> Result<Vec<Document>, DomainError>;
 
     async fn get_all_links(&self, wid: i64) -> Result<Vec<DocLink>, DomainError>;

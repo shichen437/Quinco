@@ -46,6 +46,10 @@ function AllDocsPage() {
     [openDocInActiveTab]
   )
 
+  const handleMutate = useCallback(() => {
+    setReloadKey((k) => k + 1)
+  }, [])
+
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
       <header className="shrink-0 flex items-center gap-1 px-12 pt-8 pb-4">
@@ -80,7 +84,12 @@ function AllDocsPage() {
 
       <main className="flex-1 overflow-y-auto px-12 pb-8">
         {viewMode === "docs" ? (
-          <DocsView key={`docs-${reloadKey}`} onDocClick={handleDocClick} reloadKey={reloadKey} />
+          <DocsView
+            key={`docs-${reloadKey}`}
+            onDocClick={handleDocClick}
+            reloadKey={reloadKey}
+            onMutate={handleMutate}
+          />
         ) : (
           <TagsView
             key={`tags-${reloadKey}`}

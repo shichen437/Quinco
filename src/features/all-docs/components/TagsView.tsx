@@ -31,6 +31,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table"
 import DocList from "@/features/all-docs/components/DocList"
 import { buildPages } from "@/lib/pagination"
 import { TAG_COLORS } from "@/lib/tag_color"
@@ -213,8 +214,13 @@ function TagsView({ onDocClick, activeTagId, onTagSelect, onBackToTags }: TagsVi
     setSelectedTag(tag)
     setDocsLoading(true)
     getTagDocs(tag.id)
-      .then((docIds) => Promise.all(docIds.map((id) => getDocument(id))))
-      .then(setSelectedDocs)
+      .then((docIds) => Promise.allSettled(docIds.map((id) => getDocument(id))))
+      .then((results) => {
+        const docs = results
+          .filter((r): r is PromiseFulfilledResult<Document> => r.status === "fulfilled")
+          .map((r) => r.value)
+        setSelectedDocs(docs)
+      })
       .catch((err) => {
         console.error("Failed to load tag documents:", err)
         setSelectedDocs([])
@@ -358,48 +364,60 @@ function TagsView({ onDocClick, activeTagId, onTagSelect, onBackToTags }: TagsVi
           {t("allTags")}
         </span>
 
-        <div className="space-y-0.5">
-          {tags.map((tag) => (
-            <div
-              key={tag.id}
-              className="group flex items-center gap-4 rounded-lg px-3 py-2.5 transition-colors hover:bg-accent/50 cursor-pointer"
-              role="button"
-              tabIndex={0}
-              onClick={() => handleTagSelect(tag)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault()
-                  handleTagSelect(tag)
-                }
-              }}
-            >
-              <TagDot color={tag.color} />
-              <span className="flex-1 truncate text-sm text-foreground">{tag.name}</span>
-              <div
-                className="flex w-20 items-center justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100"
-                onClick={(e) => e.stopPropagation()}
-                onKeyDown={(e) => e.stopPropagation()}
+        <Table className="[&_tr]:border-0 [&_thead_tr]:border-0">
+          <TableBody>
+            {tags.map((tag) => (
+              <TableRow
+                key={tag.id}
+                className="group cursor-pointer"
+                role="button"
+                tabIndex={0}
+                onClick={() => handleTagSelect(tag)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault()
+                    handleTagSelect(tag)
+                  }
+                }}
               >
-                <button
-                  type="button"
-                  className="rounded p-1 text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
-                  onClick={() => setEditingTag(tag)}
-                  aria-label={t("editTag")}
-                >
-                  <Pencil className="size-3.5" />
-                </button>
-                <button
-                  type="button"
-                  className="rounded p-1 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
-                  onClick={() => setDeletingTag(tag)}
-                  aria-label={t("deleteTag")}
-                >
-                  <Trash2 className="size-3.5" />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+                <TableCell className="w-8 py-2.5 pl-3 pr-0">
+                  <div className="flex h-full items-center">
+                    <TagDot color={tag.color} />
+                  </div>
+                </TableCell>
+                <TableCell className="py-2.5">
+                  <span className="block truncate text-sm text-foreground">{tag.name}</span>
+                </TableCell>
+                <TableCell className="w-20 py-2.5 pl-0 pe-3 text-right">
+                  <div className="flex items-center justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                    <button
+                      type="button"
+                      className="rounded p-1 text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setEditingTag(tag)
+                      }}
+                      aria-label={t("editTag")}
+                    >
+                      <Pencil className="size-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      className="rounded p-1 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setDeletingTag(tag)
+                      }}
+                      aria-label={t("deleteTag")}
+                    >
+                      <Trash2 className="size-3.5" />
+                    </button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
 
         {renderTagPagination()}
       </div>

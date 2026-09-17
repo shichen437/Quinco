@@ -20,9 +20,10 @@ import { buildPages } from "@/lib/pagination"
 interface DocsViewProps {
   onDocClick: (doc: Document) => void
   reloadKey: number
+  onMutate?: () => void
 }
 
-function DocsView({ onDocClick, reloadKey }: DocsViewProps) {
+function DocsView({ onDocClick, reloadKey, onMutate }: DocsViewProps) {
   const { t } = useTranslation("docs")
   const [documents, setDocuments] = useState<Document[]>([])
   const [total, setTotal] = useState(0)
@@ -62,6 +63,10 @@ function DocsView({ onDocClick, reloadKey }: DocsViewProps) {
     setPage(p)
   }, [])
 
+  const handleMutate = useCallback(() => {
+    onMutate?.()
+  }, [onMutate])
+
   if (loading && documents.length === 0) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -92,7 +97,7 @@ function DocsView({ onDocClick, reloadKey }: DocsViewProps) {
         {t("allDocs")}
       </span>
 
-      <DocList documents={documents} onDocClick={onDocClick} />
+      <DocList documents={documents} onDocClick={onDocClick} onMutate={handleMutate} />
 
       {totalPages > 1 && (
         <Pagination className="pt-2">

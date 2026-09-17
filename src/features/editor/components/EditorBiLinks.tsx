@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next"
 import { getBacklinks, type Document } from "@/api/tauri-bridge/document"
 import { DocListItem } from "@/components/common/DocListItem"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+import { Table, TableBody } from "@/components/ui/table"
 import { useTabStore } from "@/stores/navigationStore"
 
 interface EditorBiLinksProps {
@@ -59,17 +60,19 @@ export default function EditorBiLinks({ docId }: EditorBiLinksProps) {
           ) : backlinks.length === 0 ? (
             <div className="py-2 text-xs text-muted-foreground/60">{tEditor("noBacklinks")}</div>
           ) : (
-            <div className="flex flex-col gap-0.5">
-              {backlinks.map((doc) => (
-                <DocListItem
-                  key={doc.id}
-                  doc={doc}
-                  onClick={handleOpenDocument}
-                  showTime={false}
-                  maxLength={32}
-                />
-              ))}
-            </div>
+            <Table className="[&_tr]:border-0 [&_thead_tr]:border-0">
+              <TableBody>
+                {backlinks.map((doc) => (
+                  <DocListItem
+                    key={doc.id}
+                    doc={doc}
+                    onClick={handleOpenDocument}
+                    showTime={false}
+                    maxLength={32}
+                  />
+                ))}
+              </TableBody>
+            </Table>
           )}
         </div>
       </CollapsibleContent>

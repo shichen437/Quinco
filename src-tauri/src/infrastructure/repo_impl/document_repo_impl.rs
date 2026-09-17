@@ -431,6 +431,12 @@ impl DocumentRepository for DocumentRepoImpl {
             .await
             .map_err(DomainError::infra)?;
 
+        sqlx::query("DELETE FROM sys_tag_link WHERE doc_id = ?")
+            .bind(id)
+            .execute(&mut *tx)
+            .await
+            .map_err(DomainError::infra)?;
+
         sqlx::query("DELETE FROM sys_doc_ext WHERE doc_id = ?")
             .bind(id)
             .execute(&mut *tx)
@@ -439,6 +445,55 @@ impl DocumentRepository for DocumentRepoImpl {
 
         sqlx::query("DELETE FROM sys_doc WHERE id = ?")
             .bind(id)
+            .execute(&mut *tx)
+            .await
+            .map_err(DomainError::infra)?;
+
+        tx.commit().await.map_err(DomainError::infra)?;
+
+        Ok(())
+    }
+
+    async fn hard_delete_all_trashed(&self, wid: i64) -> Result<(), DomainError> {
+        let mut tx = self.pool.begin().await.map_err(DomainError::infra)?;
+
+        sqlx::query(
+            r#"
+            DELETE FROM sys_doc_link
+            WHERE source_doc_id IN (SELECT id FROM sys_doc WHERE wid = ? AND is_delete = 1)
+               OR target_doc_id IN (SELECT id FROM sys_doc WHERE wid = ? AND is_delete = 1)
+            "#,
+        )
+        .bind(wid)
+        .bind(wid)
+        .execute(&mut *tx)
+        .await
+        .map_err(DomainError::infra)?;
+
+        sqlx::query(
+            r#"
+            DELETE FROM sys_tag_link
+            WHERE doc_id IN (SELECT id FROM sys_doc WHERE wid = ? AND is_delete = 1)
+            "#,
+        )
+        .bind(wid)
+        .execute(&mut *tx)
+        .await
+        .map_err(DomainError::infra)?;
+
+        sqlx::query(
+            r#"
+            DELETE FROM sys_doc_ext
+            WHERE doc_id IN (SELECT id FROM sys_doc WHERE wid = ? AND is_delete = 1)
+            "#,
+        )
+        .bind(wid)
+        .execute(&mut *tx)
+        .await
+        .map_err(DomainError::infra)?;
+
+        sqlx::query("DELETE FROM sys_doc WHERE wid = ? AND is_delete = 1")
+            .bind(wid)
             .execute(&mut *tx)
             .await
             .map_err(DomainError::infra)?;

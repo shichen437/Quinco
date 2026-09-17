@@ -230,12 +230,19 @@ impl TagRepository for TagRepoImpl {
     }
 
     async fn get_tag_doc_ids(&self, tid: i64) -> Result<Vec<String>, DomainError> {
-        let rows: Vec<(String,)> =
-            sqlx::query_as("SELECT doc_id FROM sys_tag_link WHERE tid = ? ORDER BY rowid DESC")
-                .bind(tid)
-                .fetch_all(&self.pool)
-                .await
-                .map_err(DomainError::infra)?;
+        let rows: Vec<(String,)> = sqlx::query_as(
+            r#"
+            SELECT tl.doc_id
+            FROM sys_tag_link tl
+            INNER JOIN sys_doc d ON d.id = tl.doc_id AND d.is_delete = 0
+            WHERE tl.tid = ?
+            ORDER BY tl.rowid DESC
+            "#,
+        )
+        .bind(tid)
+        .fetch_all(&self.pool)
+        .await
+        .map_err(DomainError::infra)?;
 
         Ok(rows.into_iter().map(|r| r.0).collect())
     }

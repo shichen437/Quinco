@@ -23,6 +23,8 @@
   "trash": "Trash",
   "trashEmpty": "Trash is empty",
   "trashEmptyDesc": "Deleted documents will appear here",
+  "emptyTrash": "Empty Trash",
+  "emptyTrashDesc": "This will permanently delete all documents in the trash and their associated data. This action cannot be undone.",
   "title": "Title",
   "deletedAt": "Deleted At",
   "actions": "Actions",
