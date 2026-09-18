@@ -4,14 +4,10 @@ import {
   defaultBlockSpecs,
   defaultInlineContentSpecs,
 } from "@blocknote/core"
+import { createReactInlineMathSpec, createReactMathBlockSpec } from "@blocknote/math-block"
 
 import { docReferenceSpec } from "./extensions/docReference/DocReferenceSpec"
 
-/**
- * The editor-wide BlockNote schema, shared between the editor and any custom
- * controllers that need a type-safe editor instance (e.g. to insert the
- * `docReference` inline content).
- */
 export const blocknoteSchema = (() => {
   const { audio: _audio, video: _video, file: _file, ...remainingBlockSpecs } = defaultBlockSpecs
 
@@ -22,10 +18,12 @@ export const blocknoteSchema = (() => {
         allowToggleHeadings: false,
         levels: [1, 2, 3],
       }),
+      mathBlock: createReactMathBlockSpec(),
     },
     inlineContentSpecs: {
       ...defaultInlineContentSpecs,
       docReference: docReferenceSpec,
+      math: createReactInlineMathSpec(),
     },
   })
 })()
